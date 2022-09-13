@@ -5,7 +5,7 @@ class Neo4JBenchmarkRunnable(AbstractBenchmarkRunnable):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def generate_queries(self):
+    def materialize_query(self, query) -> str:
         pass
 
     def execute_query(self, query):

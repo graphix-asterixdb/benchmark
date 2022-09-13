@@ -1,0 +1,12 @@
+{
+  "restartCommand": "/home/ubuntu/asterixdb/restart-asterix.sh",
+  "clusterController": {
+    "address": "localhost",
+    "port": 19002
+  },
+  "queryTimeout": 3600,
+  "queries": {
+    "ic-1.sqlpp": { "repeat": 1 },
+    "ic-2.sqlpp": { "repeat": 1 }
+  }
+}

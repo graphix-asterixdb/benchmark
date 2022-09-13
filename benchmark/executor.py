@@ -7,6 +7,7 @@ import subprocess
 import abc
 import json
 import pathlib
+import tempfile
 
 
 class AbstractBenchmarkRunnable(abc.ABC):
@@ -14,7 +15,9 @@ class AbstractBenchmarkRunnable(abc.ABC):
 
     A child of this class must provide the following at instantiation as keyword arguments:
     :keyword resultDir: Relative location to write query results and logs to.
+    :keyword queryDir: Relative location to read non-parameterized query files from.
     :keyword workingSystem: Name of the system we are working with.
+    :keyword benchmarkDict: Dictionary that maps query filenames to repeats (integers).
     """
 
     def call_subprocess(self, command, is_log=True):
@@ -79,14 +82,34 @@ class AbstractBenchmarkRunnable(abc.ABC):
         self.logger.debug(json.dumps(results))
 
     @abc.abstractmethod
-    def execute_query(self, query):
-        """ Execute a given query **and** log the results. """
+    def execute_query(self, query) -> dict:
+        """ Execute a given query and return a dictionary of the results + statistics. """
         pass
 
     @abc.abstractmethod
-    def generate_queries(self):
-        """ Generate a collection of directories containing query files. """
+    def materialize_query(self, query) -> str:
+        """ Parameterize and return the given query. """
         pass
+
+    def generate_queries(self) -> str:
+        """ Generate a collection of directories containing query files. """
+        benchmark_dict = self.config['benchmarkDict']
+        while any(v['repeat'] > 0 for k, v in benchmark_dict):
+            output_dir = tempfile.mkdtemp()
+
+            # Iterate through all queries that have iterations left.
+            for query_file, query_info in benchmark_dict:
+                if query_info['repeat'] == 0:
+                    continue
+                else:
+                    query_info['repeat'] = query_info['repeat'] - 1
+
+                # Parameterize / materialize our query.
+                with open(self.config['queryDir'] + '/' + query_file, 'r') as fp1, \
+                     open(output_dir + '/' + query_file, 'w') as fp2:
+                    fp2.write(self.materialize_query(fp1.read()))
+
+            yield output_dir
 
     def __call__(self, *args, **kwargs):
         self.logger.info(f'Starting benchmark! (execution id: {self.execution_id}, '
@@ -110,7 +133,7 @@ class AbstractBenchmarkRunnable(abc.ABC):
                 with open(query_file, 'r') as fp:
                     query = fp.read()
                     self.logger.info(f'Executing query: {query}')
-                    self.execute_query(query)
+                    self.log_results(self.execute_query(query))
 
         # Flush our loggers.
         self.logger.info('Flushing the logger.')
