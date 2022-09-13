@@ -8,6 +8,7 @@ import abc
 import json
 import pathlib
 import tempfile
+import shutil
 
 
 class AbstractBenchmarkRunnable(abc.ABC):
@@ -109,7 +110,11 @@ class AbstractBenchmarkRunnable(abc.ABC):
                      open(output_dir + '/' + query_file, 'w') as fp2:
                     fp2.write(self.materialize_query(fp1.read()))
 
+            # Hand the location of the materialized queries to our caller.
             yield output_dir
+
+            # Clean up our temporary directory. We assume that our caller is now done with the materialized queries.
+            shutil.rmtree(output_dir)
 
     def __call__(self, *args, **kwargs):
         self.logger.info(f'Starting benchmark! (execution id: {self.execution_id}, '
