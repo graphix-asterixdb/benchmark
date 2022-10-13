@@ -1,0 +1,19 @@
+//       :param messageId: 1099511899880
+
+SET      `graphix.semantics.pattern` "edge-isomorphism";
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (message:Message)<-[:REPLY_OF]-(comment:Message)-[:HAS_CREATOR]->(replyAuthor:Person),
+         (message)-[:HAS_CREATOR]->(messageAuthor:Person)
+LET      knows = EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                          MATCH  (replyAuthor)-[:KNOWS]-(messageAuthor)
+                          SELECT VALUE 1 )
+WHERE    message.id = $messageId
+SELECT   DISTINCT comment.id AS commentId,
+                  comment.content,
+                  comment.creationDate AS commentCreationDate,
+                  replyAuthor.id AS replyAuthorId,
+                  replyAuthor.firstName,
+                  replyAuthor.lastName,
+                  knows
+ORDER BY comment.creationDate DESC,
+         replyAuthor.id ASC;

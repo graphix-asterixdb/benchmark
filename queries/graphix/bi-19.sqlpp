@@ -1,0 +1,39 @@
+//       :param city1Id: 669
+//       :param city2Id: 755
+
+USE      SNB.Native;
+DECLARE  GRAPH SNBGraph19 AS
+VERTEX   (:Person)
+         PRIMARY KEY (id)
+         AS Users,
+EDGE     (:Person)-[:KNOWS]->(:Person)
+         SOURCE KEY (startId)
+         DESTINATION KEY (endId)
+         AS ( FROM       GRAPH SNBGraph
+              MATCH      (personA:Person)-[:KNOWS]-(personB:Person),
+                         (personA)<-[:HAS_CREATOR]-(:Message)-[:REPLY_OF]-(:Message)-[:HAS_CREATOR]->(personB)
+              GROUP BY personA,
+                       personB
+              SELECT   personA.id AS startId,
+                       personB.id AS endId,
+                       1.0 / COUNT(*) AS weight );
+
+FROM     GRAPH SNBGraph19
+MATCH    (city1:City)<-[:IS_LOCATED_IN]-(person1:Person)-[k:KNOWS19{1,4}]->(person2:Person),
+         (person2)-[:IS_LOCATED_IN]->(city2:City)
+WHERE    city1.id = $city1Id AND
+         city2.id = $city2Id
+GROUP BY person1,
+         person2
+GROUP AS g
+LET      cheapestPath = ( FROM     g gi
+                          LET      cost = ( FROM   EDGES(gi.k) ke
+                                            SELECT VALUE SUM(ke.weight) )[0]
+                          SELECT   cost
+                          ORDER BY cost ASC
+                          LIMIT    1 )[0]
+SELECT   person1.id AS person1id,
+         person2.id AS person2id,
+         shortestPath.cost AS totalWeight
+ORDER BY person1id ASC,
+         person2id ASC;

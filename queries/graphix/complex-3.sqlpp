@@ -1,0 +1,35 @@
+//       :param personId: 933
+//       :param startDate: 1275393600000
+//       :param durationDays: 365
+//       :param countryXName: 'India'
+//       :param countryYName: 'China'
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS{1,2}]-(otherPerson:Person),
+         (otherPerson)<-[:HAS_CREATOR]-(m1:Message)-[:IS_LOCATED_IN]->(countryX:Country),
+         (otherPerson)<-[:HAS_CREATOR]-(m2:Message)-[:IS_LOCATED_IN]->(countryY:Country),
+         (otherPerson)-[:IS_LOCATED_IN]->(city:City)
+WHERE    person.id = $personId AND
+         $startDate <= m1.creationDate AND
+         m1.creationDate < $startDate + $durationDays * 86400000 AND
+         $startDate <= m2.creationDate AND
+         m2.creationDate < $startDate + $durationDays * 86400000 AND
+         countryX.name = $countryXName AND
+         countryY.name = $countryYName AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (city)-[:IS_PART_OF]->(countryX)
+                      SELECT VALUE 1 ) AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (city)-[:IS_PART_OF]->(countryY)
+                      SELECT VALUE 1 )
+GROUP BY otherPerson
+SELECT   otherPerson.id,
+         otherPerson.firstName,
+         otherPerson.lastName,
+         COUNT(DISTINCT m1) AS xCount,
+         COUNT(DISTINCT m2) AS yCount,
+         COUNT(DISTINCT m1) + COUNT(DISTINCT m2) AS `count`
+ORDER BY `count` DESC,
+         otherPerson.id ASC
+LIMIT    20;
+

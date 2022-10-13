@@ -1,0 +1,41 @@
+//       :param startDate: 1313579421570
+//       :param lengthThreshold: 20
+//       :param languages: ['ar', 'hu']
+
+WITH     sourceMessages AS ( FROM      GRAPH SNB.Native.SNBGraph
+                             MATCH     (post:Message)
+                             WHERE     post.content IS NOT NULL AND
+                                       post.length < $lengthThreshold AND
+                                       post.creationDate > $startDate AND
+                                       post.language IN $languages AND
+                                       post.isPost = TRUE
+                             SELECT    post,
+                                       post AS message
+                             UNION ALL
+                             FROM      GRAPH SNB.Native.SNBGraph
+                             MATCH     (message:Message)-[:REPLY_OF{1,4}]->(post:Message)
+                             WHERE     message.content IS NOT NULL AND
+                                       message.length < $lengthThreshold AND
+                                       message.creationDate > $startDate AND
+                                       post.language IN $languages AND
+                                       post.isPost = TRUE
+                             SELECT    post,
+                                       message ),
+          personMessages AS ( FROM   GRAPH SNB.Native.SNBGraph
+                              MATCH  (person:Person)<-[:HAS_CREATOR]-(message:Message)
+                              JOIN   sourceMessages sm
+                              ON     sm.message.id = message.id
+                              SELECT person,
+                                     sm.message )
+FROM     ( FROM      GRAPH SNB.Native.SNBGraph
+           MATCH     (person:Person)
+           LEFT JOIN personMessages pm
+           ON        pm.person.id = person.id
+           GROUP BY  pm.person
+           SELECT    pm.person,
+                     COUNT(pm.message) AS messageCount ) t
+GROUP BY t.messageCount
+SELECT   t.messageCount,
+         COUNT(t.person) AS personCount
+ORDER BY personCount DESC,
+         messageCount DESC;

@@ -1,0 +1,115 @@
+//     :metaparam DATA_PATH:
+
+DROP   DATAVERSE SNB.FromDatagen IF EXISTS;
+CREATE DATAVERSE SNB.FromDatagen;
+USE    SNB.FromDatagen;
+
+CREATE TYPE OpenType AS { };
+CREATE EXTERNAL DATASET Posts (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/post_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Comments (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/comment_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Forums (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/forum_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET ForumPerson (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/forum_hasMember_person_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET ForumTag (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/forum_hasTag_tag_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Organizations (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/organisation_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Persons (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET PersonTag (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_hasInterest_tag_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Knows (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_knows_person_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET LikesComment (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_likes_comment_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET LikesPost (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_likes_post_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET PersonUniversity (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_studyAt_organisation_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET PersonCompany (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_workAt_organisation_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Places (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/place_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET CommentTag (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/comment_hasTag_tag_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET PostTag (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/post_hasTag_tag_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET TagClasses (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/tagclass_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+CREATE EXTERNAL DATASET Tags (OpenType)
+USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/tag_0_0.csv"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );

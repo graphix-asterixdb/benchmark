@@ -1,0 +1,16 @@
+//       :param personId: 933
+//       :param tagName: 'Sammy_Sosa'
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS{1,2}]-(otherPerson:Person)<-[:HAS_CREATOR]-(post:Message),
+         (tag:Tag)<-[:HAS_TAG]-(post)-[:HAS_TAG]->(otherTag:Tag)
+WHERE    person.id = $personId AND
+         tag.name = $tagName AND
+         otherTag.name != $tagName AND
+         post.isPost = TRUE
+GROUP BY otherTag
+SELECT   otherTag.name AS otherTagName,
+         COUNT(DISTINCT post) AS postCount
+ORDER BY postCount DESC,
+         otherTagName ASC
+LIMIT    10;

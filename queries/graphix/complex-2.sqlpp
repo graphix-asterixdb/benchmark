@@ -1,0 +1,16 @@
+//       :param personId: 933
+//       :param maxDate: 1313591219961
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS]-(friend:Person)<-[:HAS_CREATOR]-(message:Message)
+WHERE    person.id = $personId AND
+         message.creationDate < $maxDate
+SELECT   friend.id AS friendId,
+         friend.firstName,
+         friend.lastName,
+         message.id AS messageId,
+         COALESCE(message.content, message.imageFile) AS content,
+         message.creationDate
+ORDER BY message.creationDate DESC,
+         messageId ASC
+LIMIT    20;

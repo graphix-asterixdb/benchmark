@@ -1,0 +1,26 @@
+//       :param personId: 933
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)<-[:HAS_CREATOR]-(message:Message)<-[likes:LIKES]-(friend:Person)
+WHERE    person.id = $personId
+GROUP BY person, friend
+GROUP AS g
+LET      likeInfo = ( FROM     g AS gi
+                      SELECT   gi.likes.creationDate, gi.message
+                      ORDER BY gi.likes.creationDate DESC,
+                               gi.message.id ASC
+                      LIMIT    1 )[0],
+         isNew    = NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                                 MATCH  (person)-[:KNOWS]-(friend)
+                                 SELECT VALUE 1 )
+SELECT   friend.id AS friendId,
+         friend.firstName,
+         friend.lastName,
+         likeInfo.creationDate,
+         likeInfo.message.id AS messageId,
+         COALESCE(likeInfo.message.content, likeInfo.message.imageFile) AS content,
+         ( likeInfo.creationDate - likeInfo.message.creationDate ) / 60000.0 AS minutesLatency,
+         isNew
+ORDER BY likeInfo.creationDate DESC,
+         friendId ASC
+LIMIT     20;

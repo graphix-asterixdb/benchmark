@@ -1,0 +1,38 @@
+//       :param tagA: 'Hamid_Karzai'
+//       :param tagB: 'Rumi'
+//       :param dateA: 1347778800000
+//       :param dateB: 1336460400000
+//       :param maxKnowsLimit: 20
+
+DECLARE  FUNCTION getMessageCount(dateInDatetime, tagName) AS {
+    FROM     GRAPH SNB.Native.SNBGraph
+    MATCH    (person1:Person)<-[:HAS_CREATOR]-(message1:Message)-[:HAS_TAG]->(tag:Tag)
+    LET      cp2 = ( FROM   GRAPH SNB.Native.SNBGraph
+                     MATCH  (person1)-[:KNOWS]-(person2:Person)<-[:HAS_CREATOR]-(message2:Message),
+                            (message2)-[:HAS_TAG]->(tag)
+                     LET    message2DateInDatetime = DATETIME_FROM_UNIX_TIME_IN_MS(message2.creationDate)
+                     WHERE  GET_DAY(message2DateInDatetime) = GET_DAY(dateInDatetime)
+                     SELECT VALUE COUNT(DISTINCT person2) )[0]
+    WHERE    tag.name = tagName AND
+             cp2 < $maxKnowsLimit AND
+             GET_YEAR(DATETIME_FROM_UNIX_TIME_IN_MS(message1.creationDate)) = 2012
+    GROUP BY person1
+    SELECT   person1.id,
+             COUNT(DISTINCT message1) AS messageCount
+};
+FROM     ( FROM      getMessageCount(DATETIME_FROM_UNIX_TIME_IN_MS($dateA), $tagA) mc
+           SELECT    mc.id,
+                     messageCount AS messageCountA,
+                     0 AS messageCountB
+           UNION ALL
+           FROM      getMessageCount(DATETIME_FROM_UNIX_TIME_IN_MS($dateB), $tagB) mc
+           SELECT    mc.id,
+                     0 AS messageCountA,
+                     mc.messageCount AS messageCountB ) t
+GROUP BY t.id
+SELECT   t.id,
+         SUM(messageCountA) AS messageCountA,
+         SUM(messageCountB) AS messageCountB
+ORDER BY messageCountA + messageCountB DESC,
+         T.id ASC
+LIMIT    20;

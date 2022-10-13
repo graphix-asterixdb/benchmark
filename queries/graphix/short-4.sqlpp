@@ -1,0 +1,7 @@
+//     :param messageId: 618475290625
+
+FROM   GRAPH SNB.Native.SNBGraph
+MATCH  (message:Message)
+WHERE  message.id = $messageId
+SELECT message.creationDate AS messageCreationDate,
+       COALESCE(message.content, message.imageFile) AS messageContent;

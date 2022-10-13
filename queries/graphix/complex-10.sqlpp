@@ -1,0 +1,32 @@
+//       :param personId: 933
+//       :param month: 3
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS{2,2}]-(foaf:Person)-[:IS_LOCATED_IN]->(city:City)
+LET      bd       = GET_MONTH(DATETIME_FROM_UNIX_TIME_IN_MS(foaf.birthday)),
+         common   = ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (person)-[:HAS_INTEREST]->(tag:Tag)<-[:HAS_TAG]-(post:Message)-[:HAS_CREATOR]->(foaf)
+                      WHERE  post.isPost = TRUE
+                      SELECT VALUE COUNT(DISTINCT post) )[0],
+         uncommon = ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (post:Message)-[:HAS_CREATOR]->(foaf)
+                      WHERE  post.isPost = TRUE AND
+                             NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                                          MATCH  (person)-[:HAS_INTEREST]->(:Tag)<-[:HAS_TAG]-(post)
+                                          SELECT VALUE 1 )
+                      SELECT VALUE COUNT(DISTINCT post) )[0]
+WHERE    person.id = $personId AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (person)-[:KNOWS]-(foaf)
+                      SELECT VALUE 1 ) AND
+         ( ( bd.month = $month AND bd.day >= 21) OR
+           ( bd.month = (3 % 12) + 1 AND bd.day < 22) )
+SELECT   foaf.id,
+         foaf.firstName,
+         foaf.lastName,
+         common - uncommon AS commonInterestScore,
+         foaf.gender,
+         city.name
+ORDER BY commonInterestScore DESC,
+         foaf.id ASC
+LIMIT    10;

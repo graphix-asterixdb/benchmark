@@ -1,0 +1,22 @@
+//        :param messageId: 618475290625
+
+WITH      sourcePosts AS ( FROM      GRAPH SNB.Native.SNBGraph
+                           MATCH     (message:Message)-[:REPLY_OF{1,5}]->(post:Message)
+                           WHERE     message.id = $messageId AND
+                                     post.isPost = TRUE
+                           SELECT    post
+                           UNION ALL
+                           FROM      GRAPH SNB.Native.SNBGraph
+                           MATCH     (post:Message)
+                           WHERE     post.id = $messageId AND
+                                     post.isPost = TRUE
+                           SELECT    post )
+FROM      GRAPH SNB.Native.SNBGraph
+MATCH     (post:Message)<-[:CONTAINER_OF]-(forum:Forum)-[:HAS_MODERATOR]->(moderator:Person)
+JOIN      sourcePosts sp
+ON        sp.post.id = post.id
+SELECT    forum.id AS forumId,
+          forum.title,
+          moderator.id AS moderatorId,
+          moderator.firstName,
+          moderator.lastName;

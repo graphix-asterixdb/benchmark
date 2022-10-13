@@ -1,0 +1,35 @@
+//       :param datetime: 1342803345373
+
+LET      totalMessages = ( FROM   GRAPH SNB.Native.SNBGraph
+                           MATCH  (inner_m:Message)
+                           WHERE  inner_m.creationDate < $datetime AND
+                                  inner_m.content IS NOT NULL
+                           SELECT VALUE COUNT(inner_m) )[0]
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (message:Message)
+LET      year           = GET_YEAR(DATETIME_FROM_UNIX_TIME_IN_MS(message.creationDate)),
+         isComment      = NOT message.isPost,
+         lengthCategory = CASE WHEN length(message.content) < 40
+                               THEN 0
+                               WHEN length(message.content) < 80
+                               THEN 1
+                               WHEN length(message.content) < 160
+                               THEN 2
+                               ELSE 3
+                          END
+WHERE    message.creationDate < $datetime AND
+         message.content IS NOT NULL
+GROUP BY year,
+         isComment,
+         lengthCategory,
+         totalMessages
+SELECT   year,
+         isComment,
+         lengthCategory,
+         COUNT(*) AS messageCount,
+         AVG(LENGTH(message.content)) AS averageMessageLength,
+         SUM(LENGTH(message.content)) AS sumMessageLength,
+         COUNT(*) * 100.0 / totalMessages AS percentageOfMessages
+ORDER BY year DESC,
+         isComment ASC,
+         lengthCategory ASC;

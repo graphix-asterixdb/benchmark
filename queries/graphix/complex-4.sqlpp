@@ -1,0 +1,22 @@
+//       :param personId: 933
+//       :param startDate: 1313579421570
+//       :param durationDays: 365
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS]-(friend:Person)<-[:HAS_CREATOR]-(post:Message)-[:HAS_TAG]->(tag:Tag),
+         (person)-[:KNOWS]-(:Person)<-[:HAS_CREATOR]-(post2:Message)
+WHERE    person.id = $personId AND
+         post.isPost = TRUE AND
+         post2.isPost = TRUE AND
+         $startDate <= post.creationDate AND
+         post.creationDate < $startDate + $durationDays * 86400000 AND
+         post2.creationDate < $startDate AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (post2)-[:HAS_TAG]->(tag)
+                      SELECT VALUE 1 )
+GROUP BY tag
+SELECT   tag.name,
+         COUNT(DISTINCT post) as postCount
+ORDER BY postCount DESC,
+         tag.name ASC
+LIMIT    10;

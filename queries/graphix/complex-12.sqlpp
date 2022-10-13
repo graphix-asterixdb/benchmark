@@ -1,0 +1,25 @@
+// :param personId: 933
+// :param tagClassName: 'Monarch'
+
+WITH     tagClasses AS ( FROM   GRAPH SNB.Native.SNBGraph
+                         MATCH  (tc:TagClass)-[:IS_SUBCLASS_OF{1,5}]->(tagClass:TagClass)
+                         WHERE  tagClass.name = $tagClassName
+                         SELECT VALUE tc.name )
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS]-(friend:Person)<-[:HAS_CREATOR]-(comment:Message)-[:REPLY_OF]->(post:Message),
+         (post)-[:HAS_TAG]->(tag:Tag)-[:HAS_TYPE]->(tc:TagClass)
+WHERE    person.id = $personId AND
+         ( tc.name IN tagClasses OR tc.name = $tagClassName ) AND
+         comment.isPost = FALSE AND
+         post.isPost = TRUE
+GROUP BY friend
+GROUP AS g
+SELECT   friend.id,
+         friend.firstName,
+         friend.lastName,
+         ( FROM   g gi
+           SELECT DISTINCT VALUE gi.tag.name ) AS tagNames,
+         COUNT(DISTINCT comment) as replyCount
+ORDER BY replyCount DESC,
+         friend.id ASC
+LIMIT    20;

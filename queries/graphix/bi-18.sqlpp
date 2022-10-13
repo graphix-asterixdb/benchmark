@@ -1,0 +1,18 @@
+//       :param tag: 'Frank_Sinatra'
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (tag:Tag)<-[:HAS_INTEREST]-(person1:Person)-[:KNOWS]-(mutualFriend:Person)-[:KNOWS]-(person2:Person),
+         (person2)-[:HAS_INTEREST]->(tag)
+WHERE    tag.name = $tag AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (person1)-[:KNOWS]-(person2)
+                      SELECT VALUE 1 )
+GROUP BY person1,
+         person2
+SELECT   person1.id AS person1Id,
+         person2.id AS person2Id,
+         COUNT(DISTINCT mutualFriend) AS mutualFriendCount
+ORDER BY mutualFriendCount DESC,
+         person1Id ASC,
+         person2Id ASC
+LIMIT    20;

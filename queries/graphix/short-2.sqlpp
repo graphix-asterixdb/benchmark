@@ -1,0 +1,35 @@
+//       :param personId: 933
+
+WITH     topMessages AS ( FROM     GRAPH SNB.Native.SNBGraph
+                          MATCH    (person:Person)<-[:HAS_CREATOR]-(message:Message)
+                          WHERE    person.id = $personId
+                          SELECT   VALUE message.id
+                          ORDER BY message.creationDate DESC
+                          LIMIT    10 ),
+         sourcePosts AS ( FROM      GRAPH SNB.Native.SNBGraph
+                          MATCH     (post:Message)
+                          WHERE     post.id IN topMessages AND
+                                    post.isPost = TRUE
+                          SELECT    post,
+                                    post AS message
+                          UNION ALL
+                          FROM      GRAPH SNB.Native.SNBGraph
+                          MATCH     (message:Message)-[:REPLY_OF{1,3}]->(post:Message)
+                          WHERE     message.id IN topMessages AND
+                                    post.isPost = TRUE
+                          SELECT    post,
+                                    message )
+FROM     SNB.Native.SNBGraph
+MATCH    (post:Message)-[:HAS_CREATOR]->(originalPoster:Person)
+JOIN     sourcePosts sp
+ON       sp.post.id = post.id
+SELECT   sp.message.id AS messageId,
+         COALESCE(sp.message.content, sp.message.imageFile) AS content,
+         sp.message.creationDate AS creationDate,
+         post.id AS postID,
+         originalPoster.id AS originalPosterID,
+         originalPoster.firstName,
+         originalPoster.lastName
+ORDER BY creationDate DESC,
+         messageId DESC
+LIMIT    10;

@@ -1,0 +1,50 @@
+//         :param date: 1313579421570
+
+WITH       topForums AS ( FROM     ( FROM     GRAPH SNB.Native.SNBGraph
+                                     MATCH    (country:Country)<-[:IS_PART_OF]-(city:City),
+                                              (city)<-[:IS_LOCATED_IN]-(member:Person),
+                                              (member)<-[:HAS_MEMBER]-(forum:Forum)
+                                     WHERE    forum.creationDate > $date
+                                     GROUP BY forum,
+                                              country
+                                     SELECT   forum,
+                                              country,
+                                              COUNT(member) as memberCount ) AS t
+                          GROUP BY t.forum
+                          SELECT   VALUE t.forum.id
+                          ORDER BY MAX(t.memberCount) DESC
+                          LIMIT    100 ),
+           sourceMessages AS ( FROM      GRAPH SNB.Native.SNBGraph
+                               MATCH     (post:Message)
+                               WHERE     post.isPost = TRUE
+                               SELECT    post AS message,
+                                         post AS post
+                               UNION ALL
+                               FROM      GRAPH SNB.Native.SNBGraph
+                               MATCH     (post:Message)<-[:REPLY_OF{1,4}]-(message:Message)
+                               WHERE     post.isPost = TRUE
+                               SELECT    message,
+                                         post )
+           personMessages AS ( FROM   GRAPH SNB.Native.SNBGraph
+                               MATCH  (person:Person)<-[:HAS_CREATOR]-(message:Message),
+                                      (post:Message)<-[:CONTAINER_OF]-(forum1:Forum)
+                               JOIN   sourceMessages sm
+                               ON     sm.message.id = message.id AND
+                                      sm.post.id = post.id
+                               WHERE  forum1.id IN topForums
+                               SELECT person,
+                                      message )
+FROM       GRAPH SNB.Native.SNBGraph
+MATCH      (person:Person)<-[:HAS_MEMBER]-(forum2:Forum)
+LEFT JOIN  personMessages pm
+ON         pm.person.id = person.id
+WHERE      forum2.id IN topForums
+GROUP BY   person
+SELECT     person.id,
+           person.firstName,
+           person.lastName,
+           person.creationDate,
+           COUNT(DISTINCT pm.message) AS messageCount
+ORDER BY   messageCount DESC,
+           person.id ASC
+LIMIT      100;

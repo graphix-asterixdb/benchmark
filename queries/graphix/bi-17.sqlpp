@@ -1,0 +1,41 @@
+//      :param tag: 'Slavoj_Žižek'
+//      :param delta: 8
+
+SET     `graphix.semantics.pattern` "homomorphism";
+WITH    sourceMessages AS ( FROM      GRAPH SNB.Native.SNBGraph
+                            MATCH     (post:Message)
+                            WHERE     post.isPost = TRUE
+                            SELECT    post,
+                                      post AS message
+                            UNION ALL
+                            FROM      GRAPH SNB.Native.SNBGraph
+                            MATCH     (message:Message)-[:REPLY_OF{1,2}]->(post:Message)
+                            WHERE     post.isPost = TRUE
+                            SELECT    post,
+                                      message )
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person1:Person)<-[:HAS_CREATOR]-(message1:Message)-[:HAS_TAG]->(tag:Tag),
+         (post1:Message)<-[:CONTAINER_OF]-(forum1:Forum),
+         (forum1)-[:HAS_MEMBER]->(person2:Person)<-[:HAS_CREATOR]-(comment:Message)-[:HAS_TAG]->(tag),
+         (forum1)-[:HAS_MEMBER]->(person3:Person)<-[:HAS_CREATOR]-(message2:Message)-[:HAS_TAG]->(tag),
+         (post2:Message)<-[:CONTAINER_OF]-(forum2:Forum)
+JOIN     sourceMessages sm1
+ON       sm1.post.id = post1.id AND
+         sm1.message.id = message1.id
+JOIN     sourceMessages sm2
+ON       sm2.post.id = post2.id AND
+         sm2.message.id = message2.id
+WHERE    forum1 <> forum2 AND
+         tag.name = $tag AND
+         comment.isPost = FALSE AND
+         person2 <> person3 AND
+         message2.creationDate > message1.creationDate + $delta * 60 * 60 * 1000 AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (forum2)-[:HAS_MEMBER]->(person1)
+                      SELECT VALUE 1 )
+GROUP BY person1.id
+SELECT   person1.id,
+         COUNT(DISTINCT message2) AS messageCount
+ORDER BY messageCount DESC,
+         person1.id ASC
+LIMIT    10;

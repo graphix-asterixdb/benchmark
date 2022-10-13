@@ -1,0 +1,40 @@
+//         :param tag: Hamid_Karzai
+//         :param startDate: 1313579421570
+//         :param endDate: 1342803345373
+
+WITH       temp AS ( FROM     ( FROM      GRAPH SNB.Native.SNBGraph
+                                MATCH     (tag:Tag)<-[:HAS_INTEREST]-(person:Person)
+                                WHERE     tag.name = $tag
+                                SELECT    person.id,
+                                          100 AS score
+                                UNION ALL
+                                FROM      GRAPH SNB.Native.SNBGraph
+                                MATCH     (tag:Tag)<-[:HAS_TAG]-(message:Message)-[:HAS_CREATOR]->(person:Person)
+                                WHERE     tag.name = $tag AND
+                                          message.creationDate > $startDate AND
+                                          message.creationDate < $endDate
+                                GROUP BY  person
+                                SELECT    person.id,
+                                          COUNT(message) AS score ) AS t
+                     GROUP BY t.id
+                     SELECT   t.id,
+                              SUM(t.score) AS score )
+FROM       GRAPH SNB.Native.SNBGraph
+MATCH      (p1:Person)
+LEFT MATCH (p1)-[:KNOWS]-(p2:Person)
+LET        score       = ( FROM   temp t
+                           WHERE  t.id = p1.id
+                           SELECT VALUE t.score )[0],
+           friendScore = ( FROM   temp t
+                           WHERE  t.id = p2.id
+                           SELECT VALUE t.score )[0]
+WHERE      p1.id IN ( FROM   temp t
+                      SELECT VALUE t.id )
+GROUP BY   p1,
+           score
+SELECT     p1.id AS id1,
+           score,
+           SUM(friendScore) AS friendsScore
+ORDER BY   score + friendsScore DESC,
+           p1.id ASC
+LIMIT      100;

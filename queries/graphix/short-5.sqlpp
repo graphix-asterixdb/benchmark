@@ -1,0 +1,8 @@
+//     :param messageId: 618475290625
+
+FROM   GRAPH SNB.Native.SNBGraph
+MATCH  (message:Message)-[:HAS_CREATOR]->(person:Person)
+WHERE  message.id = $messageId
+SELECT person.id,
+       person.firstName,
+       person.lastName;

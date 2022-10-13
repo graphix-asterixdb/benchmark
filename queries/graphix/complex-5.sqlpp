@@ -1,0 +1,15 @@
+//       :param personId: 933
+//       :param minDate: 1313579421570
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[:KNOWS{1,2}]-(otherPerson:Person)<-[h:HAS_MEMBER]-(forum:Forum),
+         (forum)-[:CONTAINER_OF]->(post:Message)-[:HAS_CREATOR]->(otherPerson)
+WHERE    person.id = $personId AND
+         h.joinDate > $minDate AND
+         post.isPost = TRUE
+GROUP BY forum
+SELECT   forum.title,
+         COUNT(DISTINCT post) AS postCount
+ORDER BY postCount DESC,
+         forum.id ASC
+LIMIT    20;

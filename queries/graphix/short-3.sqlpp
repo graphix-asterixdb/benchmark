@@ -1,0 +1,11 @@
+//       :param personId: 933
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person)-[knows:KNOWS]-(friend:Person)
+WHERE    person.id = $personId
+SELECT   friend.id,
+         friend.firstName,
+         friend.lastName,
+         knows.creationDate
+ORDER BY knows.creationDate DESC,
+         friend.id ASC;

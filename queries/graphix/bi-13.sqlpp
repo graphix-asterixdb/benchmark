@@ -1,0 +1,47 @@
+//       :param endDate => 1357002061000
+//       :param country: 'China'
+
+SET      `graphix.semantics.pattern` "edge-isomorphism";
+WITH     zombies AS ( FROM       GRAPH SNB.Native.SNBGraph
+                      MATCH      (country:Country)<-[:IS_PART_OF]-(:City)<-[:IS_LOCATED_IN]-(zombie:Person)
+                      LEFT MATCH (zombie)<-[:HAS_CREATOR]-(message:Message)
+                      LET        endDateInDatetime    = DATETIME_FROM_UNIX_TIME_IN_MS($endDate),
+                                 zombieDateInDatetime = DATETIME_FROM_UNIX_TIME_IN_MS(zombie.creationDate),
+                                 endDateYears         = GET_YEAR(endDateInDatetime),
+                                 zombieDateYears      = GET_YEAR(zombieDateInDatetime),
+                                 endDateMonths        = GET_MONTH(endDateInDatetime),
+                                 zombieDateMonths     = GET_MONTH(zombieDateInDatetime)
+                                 months               = 12 * ( endDateYears - zombieDateYears ) +
+                                                        ( endDateMonths - zombieDateMonths ) + 1
+                      WHERE      zombie.creationDate < $endDate AND
+                                 country.name = $country AND
+                                 ( message IS UNKNOWN OR message.creationDate < $endDate )
+                      GROUP BY   zombie,
+                                 months
+                      HAVING     COUNT(message) / months < 1
+                      SELECT     VALUE zombie.id )
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (zombie:Person)
+LET      zombieLikeCount = ( FROM   GRAPH SNB.Native.SNBGraph
+                             MATCH  (izombie:Person)<-[:HAS_CREATOR]-(message:Message)<-[:LIKES]-(likerZombie:Person)
+                             WHERE  izombie = zombie AND
+                                    likerZombie.id IN zombies AND
+                                    likerZombie.creationDate < $endDate
+                             SELECT VALUE COUNT (likerZombie) )[0],
+         totalLikeCount  = ( FROM   GRAPH SNB.Native.SNBGraph
+                             MATCH  (izombie:Person)<-[:HAS_CREATOR]-(message:Message)<-[:LIKES]-(likerPerson:Person)
+                             WHERE  izombie = zombie AND
+                                    likerPerson.creationDate < $endDate
+                             SELECT VALUE COUNT(likerPerson) )[0]
+WHERE    zombie.id IN zombies
+SELECT   zombie.id,
+         zombieLikeCount,
+         totalLikeCount,
+         CASE totalLikeCount
+              WHEN 0
+              THEN 0.0
+              ELSE zombieLikeCount / totalLikeCount
+         END AS zombieScore
+ORDER BY zombieScore DESC,
+         zombie.id ASC
+LIMIT    100;
