@@ -19,7 +19,8 @@ MATCH    (expertCandidatePerson:Person)-[:IS_LOCATED_IN]->(:City)-[:IS_PART_OF]-
 WHERE    country.name = $country AND
          tagClass.name = $tagClass AND
          expertCandidatePerson.id IN ids
-GROUP BY expertCandidatePerson, tag
+GROUP BY expertCandidatePerson,
+         tag
 SELECT   expertCandidatePerson.id,
          tag.name,
          COUNT(DISTINCT message) AS messageCount

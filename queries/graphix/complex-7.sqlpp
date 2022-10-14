@@ -3,7 +3,8 @@
 FROM     GRAPH SNB.Native.SNBGraph
 MATCH    (person:Person)<-[:HAS_CREATOR]-(message:Message)<-[likes:LIKES]-(friend:Person)
 WHERE    person.id = $personId
-GROUP BY person, friend
+GROUP BY person,
+         friend
 GROUP AS g
 LET      likeInfo = ( FROM     g AS gi
                       SELECT   gi.likes.creationDate, gi.message

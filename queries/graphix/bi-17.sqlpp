@@ -16,8 +16,9 @@ WITH    sourceMessages AS ( FROM      GRAPH SNB.Native.SNBGraph
 FROM     GRAPH SNB.Native.SNBGraph
 MATCH    (person1:Person)<-[:HAS_CREATOR]-(message1:Message)-[:HAS_TAG]->(tag:Tag),
          (post1:Message)<-[:CONTAINER_OF]-(forum1:Forum),
-         (forum1)-[:HAS_MEMBER]->(person2:Person)<-[:HAS_CREATOR]-(comment:Message)-[:HAS_TAG]->(tag),
-         (forum1)-[:HAS_MEMBER]->(person3:Person)<-[:HAS_CREATOR]-(message2:Message)-[:HAS_TAG]->(tag),
+         (forum1)-[:HAS_MEMBER]->(person2:Person)<-[:HAS_CREATOR]-(comment:Message),
+         (forum1)-[:HAS_MEMBER]->(person3:Person)<-[:HAS_CREATOR]-(message2:Message),
+         (tag)<-[:HAS_TAG]-(comment)-[:REPLY_OF]->(message2)-[:HAS_TAG]->(tag),
          (post2:Message)<-[:CONTAINER_OF]-(forum2:Forum)
 JOIN     sourceMessages sm1
 ON       sm1.post.id = post1.id AND
