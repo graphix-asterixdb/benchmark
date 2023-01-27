@@ -1,115 +1,439 @@
-//     :metaparam DATA_PATH:
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+//
+// This script is used to define our CSV files as external datasets, in the "SNB.FromDatagen" dataverse.
+//
 
 DROP   DATAVERSE SNB.FromDatagen IF EXISTS;
 CREATE DATAVERSE SNB.FromDatagen;
 USE    SNB.FromDatagen;
 
-CREATE TYPE OpenType AS { };
-CREATE EXTERNAL DATASET Posts (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/post_0_0.csv"),
+CREATE TYPE CommentType AS {
+    creationDate : string,
+    id           : bigint,
+    locationIP   : string,
+    browserUsed  : string,
+    content      : string?,
+    length       : int
+};
+CREATE EXTERNAL DATASET Comment (CommentType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Comment"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Comments (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/comment_0_0.csv"),
+
+CREATE TYPE CommentHasCreatorPersonType AS {
+    creationDate : string,
+    CommentId    : bigint,
+    PersonId     : bigint
+};
+CREATE EXTERNAL DATASET CommentHasCreatorPerson (CommentHasCreatorPersonType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Comment_hasCreator_Person"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Forums (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/forum_0_0.csv"),
+
+CREATE TYPE CommentHasTagTagType AS {
+    creationDate : string,
+    CommentId    : bigint,
+    TagId        : bigint
+};
+CREATE EXTERNAL DATASET CommentHasTagTag (CommentHasTagTagType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Comment_hasTag_Tag"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET ForumPerson (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/forum_hasMember_person_0_0.csv"),
+
+CREATE TYPE CommentIsLocatedInCountryType AS {
+    creationDate : string,
+    CommentId    : bigint,
+    CountryId    : bigint
+};
+CREATE EXTERNAL DATASET CommentIsLocatedInCountry (CommentIsLocatedInCountryType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Comment_isLocatedIn_Country"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET ForumTag (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/forum_hasTag_tag_0_0.csv"),
+
+CREATE TYPE CommentReplyOfCommentType AS {
+    creationDate : string,
+    Comment1Id   : bigint,
+    Comment2Id   : bigint
+};
+CREATE EXTERNAL DATASET CommentReplyOfComment (CommentReplyOfCommentType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Comment_replyOf_Comment"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Organizations (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/organisation_0_0.csv"),
+
+CREATE TYPE CommentReplyOfPostType AS {
+    creationDate : string,
+    CommentId    : bigint,
+    PostId       : bigint
+};
+CREATE EXTERNAL DATASET CommentReplyOfPost (CommentReplyOfPostType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Comment_replyOf_Post"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Persons (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_0_0.csv"),
+
+CREATE TYPE ForumType AS {
+    creationDate : string,
+    id           : bigint,
+    title        : string
+};
+CREATE EXTERNAL DATASET Forum (ForumType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Forum"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET PersonTag (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_hasInterest_tag_0_0.csv"),
+
+CREATE TYPE ForumContainerOfPostType AS {
+    creationDate : string,
+    ForumId      : bigint,
+    PostId       : bigint
+};
+CREATE EXTERNAL DATASET ForumContainerOfPost (ForumContainerOfPostType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Forum_containerOf_Post"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Knows (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_knows_person_0_0.csv"),
+
+CREATE TYPE ForumHasMemberPersonType AS {
+    creationDate : string,
+    ForumId      : bigint,
+    PersonId     : bigint
+};
+CREATE EXTERNAL DATASET ForumHasMemberPerson (ForumHasMemberPersonType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Forum_hasMember_Person"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET LikesComment (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_likes_comment_0_0.csv"),
+CREATE EXTERNAL DATASET ForumHasModeratorPerson (ForumHasMemberPersonType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Forum_hasModerator_Person"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET LikesPost (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_likes_post_0_0.csv"),
+
+CREATE TYPE ForumHasTagTagType AS {
+    creationDate : string,
+    ForumId      : bigint,
+    TagId        : bigint
+};
+CREATE EXTERNAL DATASET ForumHasTagTag (ForumHasTagTagType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Forum_hasTag_Tag"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET PersonUniversity (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_studyAt_organisation_0_0.csv"),
+
+CREATE TYPE PersonType AS {
+    creationDate : string,
+    id           : bigint,
+    firstName    : string,
+    lastName     : string,
+    gender       : string,
+    birthday     : string,
+    locationIP   : string,
+    browserUsed  : string,
+    language     : string,
+    email        : string
+};
+CREATE EXTERNAL DATASET Person (PersonType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET PersonCompany (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/person_workAt_organisation_0_0.csv"),
+
+CREATE TYPE PersonHasInterestTagType AS {
+    creationDate : string,
+    personId     : bigint,
+    interestId   : bigint
+};
+CREATE EXTERNAL DATASET PersonHasInterestTag (PersonHasInterestTagType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_hasInterest_Tag"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Places (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/place_0_0.csv"),
+
+CREATE TYPE PersonIsLocatedInCityType AS {
+    creationDate : string,
+    PersonId     : bigint,
+    CityId       : bigint
+};
+CREATE EXTERNAL DATASET PersonIsLocatedInCity (PersonIsLocatedInCityType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_isLocatedIn_City"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET CommentTag (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/comment_hasTag_tag_0_0.csv"),
+
+CREATE TYPE PersonKnowsPersonType AS {
+    creationDate : string,
+    Person1Id    : bigint,
+    Person2Id    : bigint
+};
+CREATE EXTERNAL DATASET PersonKnowsPerson (PersonKnowsPersonType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_knows_Person"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET PostTag (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/dynamic/post_hasTag_tag_0_0.csv"),
+
+CREATE TYPE PersonLikesCommentType AS {
+    creationDate : string,
+    PersonId     : bigint,
+    CommentId    : bigint
+};
+CREATE EXTERNAL DATASET PersonLikesComment (PersonLikesCommentType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_likes_Comment"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET TagClasses (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/tagclass_0_0.csv"),
+
+CREATE TYPE PersonLikesPostType AS {
+    creationDate : string,
+    PersonId     : bigint,
+    PostId       : bigint
+};
+CREATE EXTERNAL DATASET PersonLikesPost (PersonLikesPostType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_likes_Post"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
-CREATE EXTERNAL DATASET Tags (OpenType)
-USING  localfs ( ("path"="127.0.0.1:///$DATA_PATH/static/tag_0_0.csv"),
+
+CREATE TYPE PersonStudyAtUniversityType AS {
+    creationDate : string,
+    PersonId     : bigint,
+    UniversityId : bigint,
+    classYear    : bigint
+};
+CREATE EXTERNAL DATASET PersonStudyAtUniversity (PersonStudyAtUniversityType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_studyAt_University"),
+                 ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
                  ("header"="true") );
+
+CREATE TYPE PersonWorkAtCompanyType AS {
+    creationDate : string,
+    PersonId     : bigint,
+    CompanyId    : bigint,
+    workFrom     : bigint
+};
+CREATE EXTERNAL DATASET PersonWorkAtCompany (PersonWorkAtCompanyType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Person_workAt_Company"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE PostType AS {
+    creationDate : string,
+    id           : bigint,
+    imageFile    : string?,
+    locationIP   : string,
+    browserUsed  : string,
+    language     : string?,
+    content      : string?,
+    length       : int
+};
+CREATE EXTERNAL DATASET Post (PostType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Post"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE PostHasCreatorPersonType AS {
+    creationDate : string,
+    PostId       : bigint,
+    PersonId     : bigint
+};
+CREATE EXTERNAL DATASET PostHasCreatorPerson (PostHasCreatorPersonType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Post_hasCreator_Person"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE PostHasTagTagType AS {
+    creationDate : string,
+    PostId       : bigint,
+    TagId        : bigint
+};
+CREATE EXTERNAL DATASET PostHasTagTag (PostHasTagTagType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Post_hasTag_Tag"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE PostIsLocatedInCountryType AS {
+    creationDate : string,
+    PostId       : bigint,
+    CountryId    : bigint
+};
+CREATE EXTERNAL DATASET PostIsLocatedInCountry (PostIsLocatedInCountryType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Post_isLocatedin_Country"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE OrganisationType AS {
+    id     : bigint,
+    `type` : string,
+    `name` : string,
+    url    : string
+};
+CREATE EXTERNAL DATASET Organisation (OrganisationType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/Organisation"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE OrganisationIsLocatedInPlaceType AS {
+    OrganisationId : bigint,
+    PlaceId        : bigint
+};
+CREATE EXTERNAL DATASET OrganisationIsLocatedInPlace (OrganisationIsLocatedInPlaceType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/Organisation_isLocatedIn_Place"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE PlaceType AS {
+    id     : bigint,
+    `name` : string,
+    url    : string,
+    `type` : string
+};
+CREATE EXTERNAL DATASET Place (PlaceType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/Place"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE PlaceIsPartOfPlaceType AS {
+    Place1Id : bigint,
+    Place2Id : bigint
+};
+CREATE EXTERNAL DATASET PlaceIsPartOfPlace (PlaceIsPartOfPlaceType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/Place_isPartOf_Place"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE TagType AS {
+    id     : bigint,
+    `name` : string,
+    url    : string
+};
+CREATE EXTERNAL DATASET Tag (TagType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/Tag"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE TagHasTypeTagClassType AS {
+    TagId      : bigint,
+    TagClassId : bigint
+};
+CREATE EXTERNAL DATASET TagHasTypeTagClass (TagHasTypeTagClassType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/Tag_hasType_TagClass"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE TagClassType AS {
+    id     : bigint,
+    `name` : string,
+    url    : string
+};
+CREATE EXTERNAL DATASET TagClass (TagClassType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/TagClass"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+
+CREATE TYPE TagClassIsSubclassOfTagClassType AS {
+    TagClass1Id : bigint,
+    TagClass2Id : bigint
+};
+CREATE EXTERNAL DATASET TagClassIsSubclassOfTagClass (TagClassIsSubclassOfTagClassType)
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/static/TagClass_isSubclassOf_TagClass"),
+                 ("expression"="(.)*part(.)*.csv$"),
+                 ("format"="delimited-text"),
+                 ("delimiter"="|"),
+                 ("null"=""),
+                 ("header"="true") );
+    

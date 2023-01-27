@@ -1,6 +1,21 @@
-//       :param company: 'Air_Madagascar'
-//       :param person2Id: 102
-
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 USE     SNB.Native;
 DECLARE GRAPH SNBGraph20 AS
 VERTEX  (:Person)
@@ -21,7 +36,7 @@ EDGE    (:Person)-[:KNOWS]->(:Person)
         SOURCE KEY (startId)
         DESTINATION KEY (endId)
         AS ( FROM     GRAPH SNBGraph
-             MATCH    (personA:Person)-[:KNOWS]-(personB:Person),
+             MATCH    (personA:Person)-[:KNOWS]->(personB:Person),
                       (personA)-[saA:STUDY_AT]->(:University)<-[saB:STUDY_AT]-(personB)
              GROUP BY personA,
                       personB
@@ -35,7 +50,7 @@ EDGE    (:Person)-[:KNOWS]->(:Person)
 );
 
 FROM    ( FROM     GRAPH SNBGraph20
-          MATCH    (company:Company)<-[:WORK_AT]-(person1:Person)-[k:KNOWS{1,4}]->(person2:Person)
+          MATCH    (company:Company)<-[:WORK_AT]-(person1:Person)-[k:KNOWS+]->(person2:Person)
           WHERE    company.name = $company AND
                    person2.id = $person2Id
           GROUP BY person1,

@@ -1,19 +1,35 @@
-//       :param messageId: 1099511899880
-
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 SET      `graphix.semantics.pattern` "edge-isomorphism";
 FROM     GRAPH SNB.Native.SNBGraph
 MATCH    (message:Message)<-[:REPLY_OF]-(comment:Message)-[:HAS_CREATOR]->(replyAuthor:Person),
          (message)-[:HAS_CREATOR]->(messageAuthor:Person)
 LET      knows = EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                          MATCH  (replyAuthor)-[:KNOWS]-(messageAuthor)
+                          MATCH  (replyAuthor)-[:KNOWS]->(messageAuthor)
                           SELECT VALUE 1 )
 WHERE    message.id = $messageId
 SELECT   DISTINCT comment.id AS commentId,
-                  comment.content,
-                  comment.creationDate AS commentCreationDate,
+                  comment.content AS commentContent,
+                  UNIX_TIME_FROM_DATETIME_IN_MS(comment.creationDate) AS commentCreationDate,
                   replyAuthor.id AS replyAuthorId,
-                  replyAuthor.firstName,
-                  replyAuthor.lastName,
-                  knows
-ORDER BY comment.creationDate DESC,
-         replyAuthor.id ASC;
+                  replyAuthor.firstName AS replyAuthorFirstName,
+                  replyAuthor.lastName AS replyAuthorLastName,
+                  knows AS isReplyAuthorKnowsOriginalMessageAuthor
+ORDER BY commentCreationDate DESC,
+         replyAuthorId ASC;

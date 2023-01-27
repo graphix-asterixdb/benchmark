@@ -16,18 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-FROM     GRAPH SNB.Native.SNBGraph
-MATCH    (person:Person)-[:KNOWS{1,2}]->(otherPerson:Person)-[w:WORK_AT]->(company:Company),
-         (company)-[:IS_LOCATED_IN]->(country:Country)
-WHERE    person.id = $personId AND
-         w.workFrom < $workFromYear AND
-         country.name = $countryName
-SELECT   DISTINCT otherPerson.id AS personId,
-                  otherPerson.firstName AS personFirstName,
-                  otherPerson.lastName AS personLastName,
-                  company.name AS organizationName,
-                  w.workFrom AS organizationWorkFromYear
-ORDER BY organizationWorkFromYear ASC,
-         personId ASC,
-         organizationName DESC
-LIMIT    $limit;
+
+//
+// This script defines indexes on the "SNB.Native" datasets.
+//
+
+USE    SNB.Native;
+
+CREATE INDEX messageForumIdIndex
+ON     ( forumId ) EXCLUDE UNKNOWN KEY;
+CREATE INDEX likesPersonIdIndex
+ON     ( personId ) EXCLUDE UNKNOWN KEY;

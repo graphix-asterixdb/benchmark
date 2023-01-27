@@ -1,37 +1,45 @@
-//       :param endDate => 1357002061000
-//       :param country: 'China'
-
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 SET      `graphix.semantics.pattern` "edge-isomorphism";
 WITH     zombies AS ( FROM       GRAPH SNB.Native.SNBGraph
                       MATCH      (country:Country)<-[:IS_PART_OF]-(:City)<-[:IS_LOCATED_IN]-(zombie:Person)
                       LEFT MATCH (zombie)<-[:HAS_CREATOR]-(message:Message)
-                      LET        endDateInDatetime    = DATETIME_FROM_UNIX_TIME_IN_MS($endDate),
-                                 zombieDateInDatetime = DATETIME_FROM_UNIX_TIME_IN_MS(zombie.creationDate),
-                                 endDateYears         = GET_YEAR(endDateInDatetime),
-                                 zombieDateYears      = GET_YEAR(zombieDateInDatetime),
-                                 endDateMonths        = GET_MONTH(endDateInDatetime),
-                                 zombieDateMonths     = GET_MONTH(zombieDateInDatetime)
-                                 months               = 12 * ( endDateYears - zombieDateYears ) +
-                                                        ( endDateMonths - zombieDateMonths ) + 1
+                      LET        months = 12 * ( GET_YEAR($endDate) - GET_YEAR(zombie.creationDate) ) +
+                                          ( GET_MONTH($endDate) - GET_MONTH(zombie.creationDate) ) + 1
                       WHERE      zombie.creationDate < $endDate AND
                                  country.name = $country AND
-                                 ( message IS UNKNOWN OR message.creationDate < $endDate )
+                                 ( message IS UNKNOWN OR
+                                   message.creationDate < $endDate )
                       GROUP BY   zombie,
                                  months
-                      HAVING     COUNT(message) / months < 1
+                      HAVING     ( COUNT(message) / months ) < 1
                       SELECT     VALUE zombie.id )
 FROM     GRAPH SNB.Native.SNBGraph
 MATCH    (zombie:Person)
 LET      zombieLikeCount = ( FROM   GRAPH SNB.Native.SNBGraph
-                             MATCH  (izombie:Person)<-[:HAS_CREATOR]-(message:Message)<-[:LIKES]-(likerZombie:Person)
-                             WHERE  izombie = zombie AND
-                                    likerZombie.id IN zombies AND
+                             MATCH  (zombie)<-[:HAS_CREATOR]-(message:Message)<-[:LIKES]-(likerZombie:Person)
+                             WHERE  likerZombie.id IN zombies AND
                                     likerZombie.creationDate < $endDate
                              SELECT VALUE COUNT (likerZombie) )[0],
          totalLikeCount  = ( FROM   GRAPH SNB.Native.SNBGraph
-                             MATCH  (izombie:Person)<-[:HAS_CREATOR]-(message:Message)<-[:LIKES]-(likerPerson:Person)
-                             WHERE  izombie = zombie AND
-                                    likerPerson.creationDate < $endDate
+                             MATCH  (zombie)<-[:HAS_CREATOR]-(message:Message)<-[:LIKES]-(likerPerson:Person)
+                             WHERE  likerPerson.creationDate < $endDate
                              SELECT VALUE COUNT(likerPerson) )[0]
 WHERE    zombie.id IN zombies
 SELECT   zombie.id,
@@ -44,4 +52,4 @@ SELECT   zombie.id,
          END AS zombieScore
 ORDER BY zombieScore DESC,
          zombie.id ASC
-LIMIT    100;
+LIMIT    $limit;

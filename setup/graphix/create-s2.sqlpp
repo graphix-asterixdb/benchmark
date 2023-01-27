@@ -1,3 +1,26 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+//
+// This script is used to define our internal / fully managed datasets, in the "SNB.Native" dataverse.
+//
+
 DROP   DATAVERSE SNB.Native IF EXISTS;
 CREATE DATAVERSE SNB.Native;
 USE    SNB.Native;
@@ -5,7 +28,7 @@ USE    SNB.Native;
 CREATE TYPE MessageType AS {
     id               : bigint,
     imageFile        : string?,
-    creationDate     : bigint,
+    creationDate     : datetime?,
     locationIP       : string,
     browserUsed      : string,
     language         : string?,
@@ -18,53 +41,20 @@ CREATE TYPE MessageType AS {
     isPost           : boolean,
     tags             : [bigint]
 };
-CREATE DATASET Messages (MessageType) PRIMARY KEY id;
-INSERT INTO Messages ( FROM      SNB.FromDatagen.Posts p
-                       LET       tags = ( FROM   SNB.FromDatagen.PostTag t
-                                          WHERE  t.messageId = p.id
-                                          SELECT VALUE t.tagId )
-                       SELECT    p.*,
-                                 TRUE AS isPost,
-                                 tags
-                       UNION ALL
-                       FROM      SNB.FromDatagen.Comments c
-                       LET       tags = ( FROM   SNB.FromDatagen.CommentTag t
-                                          WHERE  t.messageId = c.id
-                                          SELECT VALUE t.tagId )
-                       SELECT    c.id,
-                                 c.creationDate,
-                                 c.locationIP,
-                                 c.browserUsed,
-                                 c.content,
-                                 c.length,
-                                 c.creatorId,
-                                 c.placeId,
-                                 FALSE AS isPost,
-                                 COALESCE(c.replyOfPostId, c.replyOfCommentId) AS replyOfMessageId,
-                                 tags );
-
 CREATE TYPE ForumType AS {
-    id          : bigint,
-    title       : string,
-    creationDate: bigint,
-    moderatorId : bigint,
-    tags        : [bigint]
+    id           : bigint,
+    title        : string,
+    creationDate : datetime,
+    moderatorId  : bigint?,
+    tags         : [bigint]
 };
-CREATE DATASET Forums (ForumType) PRIMARY KEY id;
-INSERT INTO Forums ( FROM   SNB.FromDatagen.Forums f
-                     LET    tags = ( FROM   SNB.FromDatagen.ForumTag t
-                                     WHERE  t.forumId = f.id
-                                     SELECT VALUE t.tagId )
-                     SELECT f.*,
-                            tags );
-
 CREATE TYPE PersonType AS {
     id           : bigint,
     firstName    : string,
     lastName     : string,
     gender       : string,
-    birthday     : bigint,
-    creationDate : bigint,
+    birthday     : date,
+    creationDate : datetime,
     locationIP   : string,
     browserUsed  : string,
     placeId      : bigint,
@@ -73,123 +63,64 @@ CREATE TYPE PersonType AS {
     universities : [{ organizationId : bigint,
                       classYear      : int }],
     companies    : [{ organizationId : bigint,
-                      workFrom:      : int }]
+                      workFrom       : int }]
 };
-CREATE DATASET Persons (PersonType) PRIMARY KEY id;
-INSERT INTO Persons ( FROM   SNB.FromDatagen.Persons p
-                      LET    universities = ( FROM   SNB.FromDatagen.PersonUniversity u
-                                              WHERE  u.personId = p.id
-                                              SELECT u.organizationId,
-                                                     u.classYear )
-                             companies    = ( FROM   SNB.FromDatagen.PersonCompany c
-                                              WHERE  c.personId = p.id
-                                              SELECT c.organizationId,
-                                                     c.workFrom )
-                      SELECT p.*,
-                             SPLIT(p.language, ';') AS language,
-                             SPLIT(p.email, ';') AS email,
-                             universities,
-                             companies );
-
 CREATE TYPE KnowsType AS {
     startId      : bigint,
     endId        : bigint,
-    creationDate : bigint
+    creationDate : datetime
 };
-CREATE DATASET Knows (KnowsType) PRIMARY KEY startId, endId;
-INSERT INTO Knows ( FROM   SNB.FromDatagen.Knows k
-                    SELECT k.* );
-
 CREATE TYPE LikesType AS {
     personId     : bigint,
     messageId    : bigint,
-    creationDate : bigint
+    creationDate : datetime
 };
-CREATE DATASET Likes (LikesType) PRIMARY KEY personId, messageId;
-INSERT INTO Likes ( FROM   SNB.FromDatagen.Likes l
-                    SELECT l.* );
-
 CREATE TYPE PersonTagType AS {
-    personId : bigint,
-    tagId    : bigint
+    personId     : bigint,
+    tagId        : bigint,
+    creationDate : datetime
 };
-CREATE DATASET PersonTag (PersonTagType) PRIMARY KEY personId, tagId;
-INSERT INTO PersonTag ( FROM   SNB.FromDatagen.PersonTag pt
-                        SELECT pt.* );
-
 CREATE TYPE ForumPersonType AS {
     forumId  : bigint,
     personId : bigint,
-    joinDate : bigint
+    joinDate : datetime
 };
-CREATE DATASET ForumPerson (ForumPersonType) PRIMARY KEY forumId, personId;
-INSERT INTO ForumPerson ( FROM   SNB.FromDatagen.ForumPerson fp
-                          SELECT fp.* );
-
 CREATE TYPE TagType AS {
     id         : bigint,
     name       : string,
     url        : string,
     tagClassId : bigint
 };
-CREATE DATASET Tags (TagType) PRIMARY KEY id;
-INSERT INTO Tags ( FROM   SNB.FromDatagen.Tags t
-                   SELECT t.* );
-
 CREATE TYPE TagClassType AS {
     id           : bigint,
     name         : string,
     url          : string,
     isSubclassOf : bigint?
 };
-CREATE DATASET TagClasses (TagClassType) PRIMARY KEY id;
-INSERT INTO TagClasses ( FROM   SNB.FromDatagen.TagClasses tc
-                         SELECT tc.* );
-
 CREATE TYPE OrganizationType AS {
     id      : bigint,
     name    : string,
     url     : string,
     placeId : bigint
 };
-CREATE DATASET Universities (OrganizationType) PRIMARY KEY id;
-INSERT INTO Universities ( FROM   SNB.FromDatagen.Organizations o
-                           WHERE  o.otype = 'university'
-                           SELECT o.id,
-                                  o.name,
-                                  o.url,
-                                  o.placeId );
-CREATE DATASET Companies (OrganizationType) PRIMARY KEY id;
-INSERT INTO Companies ( FROM   SNB.FromDatagen.Organizations o
-                        WHERE  o.otype = 'company'
-                        SELECT o.id,
-                               o.name,
-                               o.url,
-                               o.placeId );
-
 CREATE TYPE LocationType AS {
     id          : bigint,
     name        : string,
     url         : string,
     containerId : bigint?
 };
+
+CREATE DATASET Messages (MessageType) PRIMARY KEY id;
+CREATE DATASET Forums (ForumType) PRIMARY KEY id;
+CREATE DATASET Persons (PersonType) PRIMARY KEY id;
+CREATE DATASET Knows (KnowsType) PRIMARY KEY startId, endId;
+CREATE DATASET Likes (LikesType) PRIMARY KEY personId, messageId;
+CREATE DATASET PersonTag (PersonTagType) PRIMARY KEY personId, tagId;
+CREATE DATASET ForumPerson (ForumPersonType) PRIMARY KEY forumId, personId;
+CREATE DATASET Tags (TagType) PRIMARY KEY id;
+CREATE DATASET TagClasses (TagClassType) PRIMARY KEY id;
+CREATE DATASET Universities (OrganizationType) PRIMARY KEY id;
+CREATE DATASET Companies (OrganizationType) PRIMARY KEY id;
 CREATE DATASET Cities (LocationType) PRIMARY KEY id;
-INSERT INTO Cities ( FROM   SNB.FromDatagen.Places p
-                     WHERE  p.ptype = 'city'
-                     SELECT p.id,
-                            p.name,
-                            p.url,
-                            p.containerId );
 CREATE DATASET Countries (LocationType) PRIMARY KEY id;
-INSERT INTO Countries ( FROM   SNB.FromDatagen.Places p
-                        WHERE  p.ptype = 'countries'
-                        SELECT p.id,
-                               p.name,
-                               p.url,
-                               p.containerId );
 CREATE DATASET Continents (LocationType) PRIMARY KEY id;
-INSERT INTO Continents ( FROM   SNB.FromDatagen.Places p
-                         WHERE  p.ptype = 'continent'
-                         SELECT p.id,
-                                p.name,
-                                p.url );

@@ -1,5 +1,21 @@
-//       :param personId: 933
-
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 FROM     GRAPH SNB.Native.SNBGraph
 MATCH    (person:Person)<-[:HAS_CREATOR]-(message:Message)<-[likes:LIKES]-(friend:Person)
 WHERE    person.id = $personId
@@ -7,21 +23,23 @@ GROUP BY person,
          friend
 GROUP AS g
 LET      likeInfo = ( FROM     g AS gi
-                      SELECT   gi.likes.creationDate, gi.message
+                      SELECT   gi.likes.creationDate,
+                               gi.message
                       ORDER BY gi.likes.creationDate DESC,
                                gi.message.id ASC
                       LIMIT    1 )[0],
          isNew    = NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                                 MATCH  (person)-[:KNOWS]-(friend)
-                                 SELECT VALUE 1 )
-SELECT   friend.id AS friendId,
-         friend.firstName,
-         friend.lastName,
-         likeInfo.creationDate,
+                                 MATCH  (person)-[:KNOWS]->(friend)
+                                 SELECT VALUE 1 ),
+         latency = likeInfo.creationDate - likeInfo.message.creationDate
+SELECT   friend.id AS personId,
+         friend.firstName AS personFirstName,
+         friend.lastName AS personLastName,
+         UNIX_TIME_FROM_DATETIME_IN_MS(likeInfo.creationDate) AS likeCreationDate,
          likeInfo.message.id AS messageId,
-         COALESCE(likeInfo.message.content, likeInfo.message.imageFile) AS content,
-         ( likeInfo.creationDate - likeInfo.message.creationDate ) / 60000.0 AS minutesLatency,
+         COALESCE(likeInfo.message.content, likeInfo.message.imageFile) AS messageContent,
+         UNIX_TIME_FROM_DATETIME_IN_MS(latency) / 60000.0 AS minutesLatency,
          isNew
-ORDER BY likeInfo.creationDate DESC,
+ORDER BY likeCreationDate DESC,
          friendId ASC
-LIMIT     20;
+LIMIT    $limit;

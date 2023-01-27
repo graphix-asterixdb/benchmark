@@ -1,159 +1,192 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+//
+// This script is the ETL: using our external datasets, we transform and populate the internal datasets.
+//
+
+SET    `compiler.joinmemory` "8MB";
+SET    `compiler.sortmemory` "8MB";
 USE    SNB.Native;
-DROP   GRAPH SNBGraph IF EXISTS;
-CREATE GRAPH SNBGraph AS
 
-VERTEX (:Message)
-       PRIMARY KEY (id)
-       AS Messages,
-VERTEX (:Forum)
-       PRIMARY KEY (id)
-       AS Forums,
-VERTEX (:Person)
-       PRIMARY KEY (id)
-       AS Persons,
-VERTEX (:Tag)
-       PRIMARY KEY (id)
-       AS Tags,
-VERTEX (:TagClass)
-       PRIMARY KEY (id)
-       AS TagClasses,
-VERTEX (:University)
-       PRIMARY KEY (id)
-       AS Universities,
-VERTEX (:Company)
-       PRIMARY KEY (id)
-       AS Companies,
-VERTEX (:City)
-       PRIMARY KEY (id)
-       AS Cities,
-VERTEX (:Country)
-       PRIMARY KEY (id)
-       AS Countries,
-VERTEX (:Continent)
-       PRIMARY KEY (id)
-       AS Continents,
-
-EDGE   (:Message)-[:REPLY_OF]->(:Message)
-       SOURCE KEY (id)
-       DESTINATION KEY (replyOfMessageId)
-       AS ( FROM   Messages m
-            WHERE  m.isPost = FALSE
-            SELECT m.id,
-                   m.replyOfMessageId ),
-EDGE   (:Message)-[:HAS_CREATOR]->(:Person)
-       SOURCE KEY (id)
-       DESTINATION KEY (creatorId)
-       AS ( FROM   Messages m
-            SELECT m.id,
-                   m.creatorId ),
-EDGE   (:Message)-[:IS_LOCATED_IN]->(:Country)
-       SOURCE KEY (id)
-       DESTINATION KEY (placeId)
-       AS ( FROM   Messages m
-            SELECT m.id,
-                   m.placeId ),
-EDGE   (:Message)-[:HAS_TAG]->(:Tag)
-       SOURCE KEY (id)
-       DESTINATION KEY (tagId)
-       AS ( FROM   Messages m
-            UNNEST m.tags tagId
-            SELECT m.id,
-                   tagId ),
-EDGE   (:Forum)-[:CONTAINER_OF]->(:Message)
-       SOURCE KEY (forumId)
-       DESTINATION KEY (id)
-       AS ( FROM   Messages m
-            WHERE  m.isPost = TRUE
-            SELECT m.id,
-                   m.forumId ),
-EDGE   (:Forum)-[:HAS_MODERATOR]->(:Person)
-       SOURCE KEY (id)
-       DESTINATION KEY (moderatorId)
-       AS ( FROM   Forums f
-            SELECT f.id,
-                   f.moderatorId ),
-EDGE   (:Forum)-[:HAS_MEMBER]->(:Person)
-       SOURCE KEY (forumId)
-       DESTINATION KEY (personId)
-       AS ( FROM   ForumPerson fp
-            SELECT fp.* ),
-EDGE   (:Forum)-[:HAS_TAG]->(:Tag)
-       SOURCE KEY (id)
-       DESTINATION KEY (tagId)
-       AS ( FROM   Forums f
-            UNNEST f.tags tagId
-            SELECT f.id,
-                   tagId ),
-EDGE   (:Person)-[:KNOWS]->(:Person)
-       SOURCE KEY (startId)
-       DESTINATION KEY (endId)
-       AS ( FROM   Knows k
-            SELECT k.* ),
-EDGE   (:Person)-[:HAS_INTEREST]->(:Tag)
-       SOURCE KEY (personId)
-       DESTINATION KEY (tagId)
-       AS ( FROM   PersonTag pt
-            SELECT pt.* ),
-EDGE   (:Person)-[:IS_LOCATED_IN]->(:City)
-       SOURCE KEY (id)
-       DESTINATION KEY (placeId)
-       AS ( FROM Persons p
-            SELECT p.id,
-                   p.placeId ),
-EDGE   (:Person)-[:STUDY_AT]->(:University)
-       SOURCE KEY (id)
-       DESTINATION KEY (organizationId)
-       AS ( FROM   Persons p
-            UNNEST p.universities u
-            SELECT p.id,
-                   u.organizationId,
-                   u.classYear ),
-EDGE   (:Person)-[:WORK_AT]->(:Company)
-       SOURCE KEY (id)
-       DESTINATION KEY (organizationId)
-       AS ( FROM   Persons p
-            UNNEST p.companies c
-            SELECT p.id,
-                   c.organizationId,
-                   c.workFrom ),
-EDGE   (:Person)-[:LIKES]->(:Message)
-       SOURCE KEY (personId)
-       DESTINATION KEY (messageId)
-       AS ( FROM   Likes l
-            SELECT l.* ),
-EDGE   (:Tag)-[:HAS_TYPE]->(:TagClass)
-       SOURCE KEY (id)
-       DESTINATION KEY (tagClassId)
-       AS ( FROM   Tags t
-            SELECT t.id,
-                   t.tagClassId ),
-EDGE   (:TagClass)-[:IS_SUBCLASS_OF]->(:TagClass)
-       SOURCE KEY (id)
-       DESTINATION KEY (isSubclassOf)
-       AS ( FROM   TagClasses tc
-            SELECT tc.id,
-                   tc.isSubclassOf ),
-EDGE   (:University)-[:IS_LOCATED_IN]->(:City)
-       SOURCE KEY (id)
-       DESTINATION KEY (placeId)
-       AS ( FROM   Universities u
-            SELECT u.id,
-                   u.placeId ),
-EDGE   (:Company)-[:IS_LOCATED_IN]->(:Country)
-       SOURCE KEY (id)
-       DESTINATION KEY (placeId)
-       AS ( FROM   Companies c
-            SELECT c.id,
-                   c.placeId ),
-EDGE   (:City)-[:IS_PART_OF]->(:Country)
-       SOURCE KEY (id)
-       DESTINATION KEY (containerId)
-       AS ( FROM   Cities c
-            SELECT c.id,
-                   c.containerId ),
-EDGE   (:Country)-[:IS_PART_OF]->(:Continent)
-       SOURCE KEY (id)
-       DESTINATION KEY (containerId)
-       AS ( FROM   Countries c
-            SELECT c.id,
-                   c.containerId );
+INSERT INTO Messages ( FROM      SNB.FromDatagen.Post p,
+                                 SNB.FromDatagen.PostHasCreatorPerson phcp,
+                                 SNB.FromDatagen.PostIsLocatedInCountry pilic
+                       LET       tags = ( FROM   SNB.FromDatagen.PostHasTagTag phtt
+                                          WHERE  phtt.PostId = p.id
+                                          SELECT VALUE phtt.TagId ),
+                                 forumId = ( FROM   SNB.FromDatagen.ForumContainerOfPost fcop
+                                             WHERE  fcop.PostId = p.id
+                                             SELECT VALUE fcop.ForumId )[0]
+                       WHERE     p.id = phcp.PostId AND
+                                 p.id = pilic.PostId
+                       SELECT    p.id,
+                                 p.imageFile,
+                                 -- A few parse errors show up here, so we'll make this field optional.
+                                 DATETIME(p.creationDate) AS creationDate,
+                                 p.locationIP,
+                                 p.browserUsed,
+                                 p.language,
+                                 p.content,
+                                 p.length,
+                                 phcp.PersonId AS creatorId,
+                                 forumId,
+                                 pilic.CountryId AS placeId,
+                                 -- replyOfMessageId does not exist for Posts.
+                                 TRUE AS isPost,
+                                 tags
+                       UNION ALL
+                       FROM      SNB.FromDatagen.Comment c,
+                                 SNB.FromDatagen.CommentHasCreatorPerson chcp,
+                                 SNB.FromDatagen.CommentIsLocatedInCountry cilic
+                       LET       tags = ( FROM   SNB.FromDatagen.CommentHasTagTag chtt
+                                          WHERE  chtt.CommentId = c.id
+                                          SELECT VALUE chtt.TagId ),
+                                 replyOfCommentId = ( FROM   SNB.FromDatagen.CommentReplyOfComment cpoc
+                                                      WHERE  cpoc.Comment1Id = c.id
+                                                      SELECT VALUE Comment2Id )[0],
+                                 replyOfPostId = ( FROM   SNB.FromDatagen.CommentReplyOfPost crop
+                                                   WHERE  crop.CommentId = c.id
+                                                   SELECT VALUE crop.PostId )[0]
+                       WHERE     c.id = chcp.CommentId AND
+                                 c.id = cilic.CommentId
+                       SELECT    c.id,
+                                 -- imageFile does not exist for Comments.
+                                 -- A few parse errors show up here, so we'll make this field optional.
+                                 DATETIME(c.creationDate) AS creationDate,
+                                 c.locationIP,
+                                 c.browserUsed,
+                                 c.content,
+                                 c.length,
+                                 chcp.PersonId AS creatorId,
+                                 -- forumId does not exist for Comments.
+                                 cilic.CountryId AS placeId,
+                                 IF_MISSING_OR_NULL(replyOfPostId, replyOfCommentId) AS replyOfMessageId,
+                                 FALSE AS isPost,
+                                 tags );
+INSERT INTO Forums ( FROM   SNB.FromDatagen.Forum f
+                     LET    tags = ( FROM   SNB.FromDatagen.ForumHasTagTag fhtt
+                                     WHERE  fhtt.ForumId = f.id
+                                     SELECT VALUE fhtt.TagId ),
+                            moderatorId = ( FROM   SNB.FromDatagen.ForumHasModeratorPerson fhmp
+                                            WHERE  fhmp.ForumId = f.id
+                                            SELECT VALUE fhmp.PersonId )[0]
+                     SELECT f.id,
+                            f.title,
+                            DATETIME(f.creationDate) AS creationDate,
+                            moderatorId,
+                            tags );
+INSERT INTO Persons ( FROM   SNB.FromDatagen.Person p,
+                             SNB.FromDatagen.PersonIsLocatedInCity pilic
+                      LET    universities = ( FROM   SNB.FromDatagen.PersonStudyAtUniversity psau
+                                              WHERE  psau.PersonId = p.id
+                                              SELECT psau.UniversityId AS organizationId,
+                                                     psau.classYear ),
+                             companies    = ( FROM   SNB.FromDatagen.PersonWorkAtCompany pwac
+                                              WHERE  pwac.PersonId = p.id
+                                              SELECT pwac.CompanyId AS organizationId,
+                                                     pwac.workFrom )
+                      WHERE  p.id = pilic.PersonId
+                      SELECT p.id,
+                             p.firstName,
+                             p.lastName,
+                             p.gender,
+                             DATE(p.birthday) AS birthday,
+                             DATETIME(p.creationDate) AS creationDate,
+                             p.locationIP,
+                             p.browserUsed,
+                             pilic.CityId AS placeId,
+                             SPLIT(p.email, ';') AS email,
+                             SPLIT(p.language, ';') AS language,
+                             universities,
+                             companies );
+INSERT INTO Knows ( FROM      SNB.FromDatagen.PersonKnowsPerson pkp
+                    SELECT    DATETIME(pkp.creationDate) AS creationDate,
+                              pkp.Person1Id AS startId,
+                              pkp.Person2Id AS endId
+                    UNION ALL
+                    FROM      SNB.FromDatagen.PersonKnowsPerson pkp
+                    SELECT    DATETIME(pkp.creationDate) AS creationDate,
+                              pkp.Person2Id AS startId,
+                              pkp.Person1Id AS endId );
+INSERT INTO Likes ( FROM      SNB.FromDatagen.PersonLikesComment plc
+                    SELECT    DATETIME(plc.creationDate) AS creationDate,
+                              plc.PersonId AS personId,
+                              plc.CommentId AS messageId );
+-- Note: there's a UNION-ALL bug here, we'll just perform the INSERT twice.
+INSERT INTO Likes ( FROM      SNB.FromDatagen.PersonLikesPost plp
+                    SELECT    DATETIME(plp.creationDate) AS creationDate,
+                              plp.PersonId AS personId,
+                              plp.PostId AS messageId );
+INSERT INTO PersonTag ( FROM   SNB.FromDatagen.PersonHasInterestTag phit
+                        SELECT phit.personId,
+                               phit.interestId AS tagId,
+                               DATETIME(phit.creationDate) AS creationDate );
+INSERT INTO ForumPerson ( FROM   SNB.FromDatagen.ForumHasMemberPerson fhmp
+                          SELECT fhmp.ForumId AS forumId,
+                                 fhmp.PersonId AS personId,
+                                 DATETIME(fhmp.creationDate) AS joinDate );
+INSERT INTO Tags ( FROM   SNB.FromDatagen.Tag t,
+                          SNB.FromDatagen.TagHasTypeTagClass thttc
+                   WHERE  thttc.TagId = t.id
+                   SELECT t.*,
+                          thttc.TagClassId AS tagClassId );
+INSERT INTO TagClasses ( FROM   SNB.FromDatagen.TagClass tc
+                         LET    isSubclassOf = ( FROM   SNB.FromDatagen.TagClassIsSubclassOfTagClass tcisotc
+                                                 WHERE  tcisotc.TagClass1Id = tc.id
+                                                 SELECT VALUE tcisotc.TagClass2Id )[0]
+                         SELECT tc.*,
+                                isSubclassOf );
+INSERT INTO Universities ( FROM   SNB.FromDatagen.Organisation o,
+                                  SNB.FromDatagen.OrganisationIsLocatedInPlace oilip
+                           WHERE  o.`type` LIKE 'University' AND
+                                  oilip.OrganisationId = o.id
+                           SELECT o.id,
+                                  o.name,
+                                  o.url,
+                                  oilip.PlaceId AS placeId );
+INSERT INTO Companies ( FROM   SNB.FromDatagen.Organisation o,
+                               SNB.FromDatagen.OrganisationIsLocatedInPlace oilip
+                        WHERE  o.`type` LIKE 'Company' AND
+                               oilip.OrganisationId = o.id
+                        SELECT o.id,
+                               o.name,
+                               o.url,
+                               oilip.PlaceId AS placeId );
+INSERT INTO Cities ( FROM   SNB.FromDatagen.Place p,
+                            SNB.FromDatagen.PlaceIsPartOfPlace pipop
+                     WHERE  p.`type` = 'City' AND
+                            pipop.Place1Id = p.id
+                     SELECT p.id,
+                            p.name,
+                            p.url,
+                            pipop.Place2Id AS containerId );
+INSERT INTO Countries ( FROM   SNB.FromDatagen.Place p,
+                               SNB.FromDatagen.PlaceIsPartOfPlace pipop
+                        WHERE  p.`type` = 'Country' AND
+                               pipop.Place1Id = p.id
+                        SELECT p.id,
+                               p.name,
+                               p.url,
+                               pipop.Place2Id AS containerId );
+INSERT INTO Continents ( FROM   SNB.FromDatagen.Place p
+                         WHERE  p.`type` = 'Continent'
+                         SELECT p.id,
+                                p.name,
+                                p.url );

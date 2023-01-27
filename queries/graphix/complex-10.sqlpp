@@ -1,9 +1,24 @@
-//       :param personId: 933
-//       :param month: 3
-
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 FROM     GRAPH SNB.Native.SNBGraph
-MATCH    (person:Person)-[:KNOWS{2,2}]-(foaf:Person)-[:IS_LOCATED_IN]->(city:City)
-LET      bd       = GET_MONTH(DATETIME_FROM_UNIX_TIME_IN_MS(foaf.birthday)),
+MATCH    (person:Person)-[:KNOWS{2,2}]->(foaf:Person)-[:IS_LOCATED_IN]->(city:City)
+LET      bd       = GET_MONTH(foaf.birthday),
          common   = ( FROM   GRAPH SNB.Native.SNBGraph
                       MATCH  (person)-[:HAS_INTEREST]->(tag:Tag)<-[:HAS_TAG]-(post:Message)-[:HAS_CREATOR]->(foaf)
                       WHERE  post.isPost = TRUE
@@ -17,16 +32,16 @@ LET      bd       = GET_MONTH(DATETIME_FROM_UNIX_TIME_IN_MS(foaf.birthday)),
                       SELECT VALUE COUNT(DISTINCT post) )[0]
 WHERE    person.id = $personId AND
          NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                      MATCH  (person)-[:KNOWS]-(foaf)
+                      MATCH  (person)-[:KNOWS]->(foaf)
                       SELECT VALUE 1 ) AND
          ( ( bd.month = $month AND bd.day >= 21) OR
            ( bd.month = (3 % 12) + 1 AND bd.day < 22) )
-SELECT   foaf.id,
-         foaf.firstName,
-         foaf.lastName,
+SELECT   foaf.id AS personId,
+         foaf.firstName AS personFirstName,
+         foaf.lastName AS personLastName,
          common - uncommon AS commonInterestScore,
-         foaf.gender,
-         city.name
+         foaf.gender AS personGender,
+         city.name AS personCityName
 ORDER BY commonInterestScore DESC,
-         foaf.id ASC
-LIMIT    10;
+         personId ASC
+LIMIT    $limit;
