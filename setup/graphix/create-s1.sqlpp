@@ -328,7 +328,7 @@ CREATE TYPE PostIsLocatedInCountryType AS {
     CountryId    : bigint
 };
 CREATE EXTERNAL DATASET PostIsLocatedInCountry (PostIsLocatedInCountryType)
-USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Post_isLocatedin_Country"),
+USING  localfs ( ("path"="127.0.0.1://$DATA_PATH/dynamic/Post_isLocatedIn_Country"),
                  ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
