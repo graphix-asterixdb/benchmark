@@ -21,8 +21,6 @@
 // This script is the ETL: using our external datasets, we transform and populate the internal datasets.
 //
 
-SET    `compiler.joinmemory` "8MB";
-SET    `compiler.sortmemory` "8MB";
 USE    SNB.Native;
 
 INSERT INTO Messages ( FROM      SNB.FromDatagen.Post p,
@@ -50,9 +48,8 @@ INSERT INTO Messages ( FROM      SNB.FromDatagen.Post p,
                                  pilic.CountryId AS placeId,
                                  -- replyOfMessageId does not exist for Posts.
                                  TRUE AS isPost,
-                                 tags
-                       UNION ALL
-                       FROM      SNB.FromDatagen.Comment c,
+                                 tags );
+INSERT INTO Messages ( FROM      SNB.FromDatagen.Comment c,
                                  SNB.FromDatagen.CommentHasCreatorPerson chcp,
                                  SNB.FromDatagen.CommentIsLocatedInCountry cilic
                        LET       tags = ( FROM   SNB.FromDatagen.CommentHasTagTag chtt
@@ -135,8 +132,8 @@ INSERT INTO Likes ( FROM      SNB.FromDatagen.PersonLikesPost plp
                               plp.PersonId AS personId,
                               plp.PostId AS messageId );
 INSERT INTO PersonTag ( FROM   SNB.FromDatagen.PersonHasInterestTag phit
-                        SELECT phit.personId,
-                               phit.interestId AS tagId,
+                        SELECT phit.PersonId AS personId,
+                               phit.InterestId AS tagId,
                                DATETIME(phit.creationDate) AS creationDate );
 INSERT INTO ForumPerson ( FROM   SNB.FromDatagen.ForumHasMemberPerson fhmp
                           SELECT fhmp.ForumId AS forumId,
