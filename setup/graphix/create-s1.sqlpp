@@ -39,7 +39,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Comment"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE CommentHasCreatorPersonType AS {
     creationDate : string,
@@ -52,7 +52,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Comment_hasCreator_Person"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE CommentHasTagTagType AS {
     creationDate : string,
@@ -65,7 +65,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Comment_hasTag_Tag"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE CommentIsLocatedInCountryType AS {
     creationDate : string,
@@ -78,7 +78,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Comment_isLocatedIn_Country"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE CommentReplyOfCommentType AS {
     creationDate : string,
@@ -91,7 +91,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Comment_replyOf_Comment"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE CommentReplyOfPostType AS {
     creationDate : string,
@@ -104,7 +104,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Comment_replyOf_Post"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE ForumType AS {
     creationDate : string,
@@ -117,7 +117,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Forum"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE ForumContainerOfPostType AS {
     creationDate : string,
@@ -130,7 +130,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Forum_containerOf_Post"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE ForumHasMemberPersonType AS {
     creationDate : string,
@@ -143,14 +143,14 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Forum_hasMember_Person"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 CREATE EXTERNAL DATASET ForumHasModeratorPerson (ForumHasMemberPersonType)
 USING  localfs ( ("path"="$DATA_PATH/dynamic/Forum_hasModerator_Person"),
                  ("expression"="(.)*part(.)*.csv$"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE ForumHasTagTagType AS {
     creationDate : string,
@@ -163,7 +163,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Forum_hasTag_Tag"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonType AS {
     creationDate : string,
@@ -183,12 +183,12 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonHasInterestTagType AS {
     creationDate : string,
-    personId     : bigint,
-    interestId   : bigint
+    PersonId     : bigint,
+    InterestId   : bigint
 };
 CREATE EXTERNAL DATASET PersonHasInterestTag (PersonHasInterestTagType)
 USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_hasInterest_Tag"),
@@ -196,7 +196,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_hasInterest_Tag"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonIsLocatedInCityType AS {
     creationDate : string,
@@ -209,7 +209,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_isLocatedIn_City"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonKnowsPersonType AS {
     creationDate : string,
@@ -222,7 +222,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_knows_Person"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonLikesCommentType AS {
     creationDate : string,
@@ -235,7 +235,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_likes_Comment"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonLikesPostType AS {
     creationDate : string,
@@ -248,7 +248,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_likes_Post"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonStudyAtUniversityType AS {
     creationDate : string,
@@ -262,7 +262,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_studyAt_University"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PersonWorkAtCompanyType AS {
     creationDate : string,
@@ -276,7 +276,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Person_workAt_Company"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PostType AS {
     creationDate : string,
@@ -294,7 +294,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Post"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PostHasCreatorPersonType AS {
     creationDate : string,
@@ -307,7 +307,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Post_hasCreator_Person"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PostHasTagTagType AS {
     creationDate : string,
@@ -320,7 +320,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Post_hasTag_Tag"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PostIsLocatedInCountryType AS {
     creationDate : string,
@@ -333,7 +333,7 @@ USING  localfs ( ("path"="$DATA_PATH/dynamic/Post_isLocatedIn_Country"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE OrganisationType AS {
     id     : bigint,
@@ -347,7 +347,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/Organisation"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE OrganisationIsLocatedInPlaceType AS {
     OrganisationId : bigint,
@@ -359,7 +359,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/Organisation_isLocatedIn_Place"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PlaceType AS {
     id     : bigint,
@@ -373,7 +373,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/Place"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE PlaceIsPartOfPlaceType AS {
     Place1Id : bigint,
@@ -385,7 +385,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/Place_isPartOf_Place"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE TagType AS {
     id     : bigint,
@@ -398,7 +398,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/Tag"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE TagHasTypeTagClassType AS {
     TagId      : bigint,
@@ -410,7 +410,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/Tag_hasType_TagClass"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE TagClassType AS {
     id     : bigint,
@@ -423,7 +423,7 @@ USING  localfs ( ("path"="$DATA_PATH/static/TagClass"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
 
 CREATE TYPE TagClassIsSubclassOfTagClassType AS {
     TagClass1Id : bigint,
@@ -435,5 +435,5 @@ USING  localfs ( ("path"="$DATA_PATH/static/TagClass_isSubclassOf_TagClass"),
                  ("format"="delimited-text"),
                  ("delimiter"="|"),
                  ("null"=""),
-                 ("header"="true") );
+                 ("header"="false") );
     
