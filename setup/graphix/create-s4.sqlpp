@@ -24,6 +24,6 @@
 USE    SNB.Native;
 
 CREATE INDEX messageForumIdIndex
-ON     ( forumId ) EXCLUDE UNKNOWN KEY;
+ON     Messages ( forumId ) EXCLUDE UNKNOWN KEY;
 CREATE INDEX likesPersonIdIndex
-ON     ( personId ) EXCLUDE UNKNOWN KEY;
+ON     Likes ( personId ) EXCLUDE UNKNOWN KEY;
