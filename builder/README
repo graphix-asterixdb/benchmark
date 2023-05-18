@@ -1,0 +1,36 @@
+# LDBC SNB Graphix Node Builder
+
+The purpose of this instance is to generate a Graphix cluster.
+This instance was generated using the following commands:
+01. sudo yum install git tmux htop
+02. # Copy the graphix package here from the development machine...
+03. cd graphix ; vi graphix-cc.conf ; cd ;
+04. pip3 install ansible
+05. pip3 install boto
+06. pip3 install boto3
+07. vi ~/ldbc-snb-kp.pem  
+    # Upload the ldbc-snb-kp PEM to here...
+08. sudo chmod 400 ldbc-snb-kp.pem
+09. vi ~/.ssh/config
+    # Insert the lines:
+    # Host *.amazonaws.com
+    #    IdentityFile ~/ldbc-snb-kp.pem
+10. chmod 600 ~/.ssh/config
+11. vi ~/.ansible.cfg
+    # Add the following:
+    # [defaults]
+    # interpreter_python=/usr/bin/python3
+12. # Update the aws folder...
+
+# Setup the 1NC cluster.
+## Spawn AWS instances and deploy Graphix.
+13. ssh-agent bash 
+14. ssh-add ~/ldbc-snb-kp.pem 
+15. vi graphix/opt/aws/conf/aws_settings.yml
+    # Modify 'count: 1'
+16. cd ~/graphix/opt/aws/ ; ./bin/deploy.sh
+17. ./bin/start.sh
+
+# Setup for SF300.
+18. ./bin/copy_raw.sh 300
+

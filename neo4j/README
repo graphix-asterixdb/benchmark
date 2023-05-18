@@ -1,0 +1,45 @@
+# LDBC SNB Neo4J Node
+
+The purpose of this instance is to run Neo4J.
+This instance was generated using the following commands:
+01. sudo yum -y install htop tmux
+02. sudo yum -y install java-11-amazon-corretto-headless
+03. sudo rpm --import https://debian.neo4j.com/neotechnology.gpg.key
+04. sudo vi /etc/yum.repos.d/neo4j.repo
+    # Add the following lines:
+    # [neo4j]
+    # name=Neo4j RPM Repository
+    # baseurl=https://yum.neo4j.com/stable/5
+    # enabled=1
+    # gpgcheck=1
+05. sudo yum install neo4j-5.4.0
+06. sudo fdisk -l # look for the unmounted drive, in this case its /dev/xvdb
+07. sudo mkfs.ext4 /dev/xvdb
+08. mkdir data_dir
+09. sudo mount /dev/xvdb data_dir
+10. sudo chown ec2-user data_dir
+11. mkdir data_dir/{data,logs,import,plugins}
+12. sudo vi /etc/neo4j/neo4j.conf
+    # Modify the following:
+    # server.directories.data=/home/ec2-user/data_dir/data
+    # server.directories.plugins=/home/ec2-user/data_dir/plugins
+    # server.directories.logs=/home/ec2-user/logs
+    # server.directories.import=/home/ec2-user/data_dir/raw-data
+    #
+    # server.default_listen_address=0.0.0.0
+
+# Import the datasets.
+13. sudo rm -rf data_dir/data data_dir/logs data_dir/import data_dir/plugins
+14. SF=0p3
+15. export NEO4J_CONTAINER_ROOT=/home/ec2-user/data_dir
+16. export NEO4J_CSV_DIR=/data0/sf-${SF}/graphs/csv/bi/composite-projected-fk/initial_snapshot
+17. sudo -E ~/setup/import-datasets.sh
+
+ #Start Neo4J (to build the database), then build the indices. 
+20. sudo neo4j-admin dbms set-initial-password FlyingPasswordColors2
+21. sudo neo4j console
+22. cypher-shell -u neo4j -p FlyingPasswordColors2 < /home/ec2-user/setup/create-indices.cypher
+
+
+
+

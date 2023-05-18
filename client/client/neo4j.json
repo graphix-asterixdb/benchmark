@@ -1,0 +1,21 @@
+{
+  "workload": [
+    {
+      "queryFile": "bi-6.cypher",
+      "parameterFiles": [
+        "bi-6.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-14.cypher",
+      "parameterFiles": [
+        "bi-14a.csv",
+        "bi-14b.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    }
+  ]
+}

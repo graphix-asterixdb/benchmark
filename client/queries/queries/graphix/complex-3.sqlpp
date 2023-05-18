@@ -1,0 +1,51 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+FROM     GRAPH SNB.Native.SNBGraph
+MATCH    (person:Person WHERE person.id = $personId)
+         (person)-[:KNOWS{1,2}]->(otherPerson:Person),
+         (otherPerson)<-[:HAS_CREATOR]-(m1:Message),
+         (m1)-[:IS_LOCATED_IN]->(countryX:Country),
+         (otherPerson)<-[:HAS_CREATOR]-(m2:Message),
+         (m2)-[:IS_LOCATED_IN]->(countryY:Country),
+         (otherPerson)-[:IS_LOCATED_IN]->(city:City)
+LET      endDate = $startDate + DURATION("P" + $durationDays + "D")
+WHERE    $startDate <= m1.creationDate AND
+         m1.creationDate < endDate AND
+         $startDate <= m2.creationDate AND
+         m2.creationDate < endDate AND
+         countryX.name = $countryXName AND
+         countryY.name = $countryYName AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (city)-[:IS_PART_OF]->(countryX)
+                      SELECT VALUE 1 ) AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+                      MATCH  (city)-[:IS_PART_OF]->(countryY)
+                      SELECT VALUE 1 )
+GROUP BY otherPerson
+SELECT   otherPerson.id AS personId,
+         otherPerson.firstName AS personFirstName,
+         otherPerson.lastName AS personLastName,
+         COUNT(DISTINCT m1) AS xCount,
+         COUNT(DISTINCT m2) AS yCount,
+         COUNT(DISTINCT m1) + COUNT(DISTINCT m2) AS `count`
+ORDER BY `count` DESC,
+         personId ASC
+LIMIT    $limit;
+

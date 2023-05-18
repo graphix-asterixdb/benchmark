@@ -1,2 +1,22 @@
 .idea/*
 *.DS_Store
+*.ipynb_checkpoints/*
+*/logs/*
+*/results/*
+*/scratch/*
+*/asterixdb/*
+
+# Some user-specific directories.
+venv/*
+neo4j/*
+!neo4j/README
+graphix/*
+datagen/*
+!datagen/README
+
+
+# Some user-specific files.
+ldbc-snb-kp.pem
+ldbc-snb-profile
+synchronize.sh
+

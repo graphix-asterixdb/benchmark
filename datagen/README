@@ -1,0 +1,85 @@
+# LDBC SNB Datagen Client
+
+The purpose of this instance is to generate the LDBC data AND complex / bi query parameters.
+This instance was generated using the following commands:
+01. sudo yum install git tmux htop
+02. git clone https://github.com/ldbc/ldbc_snb_datagen_spark.git
+03. mkdir ldbc_snb_efs
+04. sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-0ade7bbed0f8ae478.efs.us-west-1.amazonaws.com:/ ~/ldbc_snb_efs/
+05. cd ldbc_snb_efs
+06. sudo chmod go+rw .
+07. sudo vi /etc/fstab  # We want to add the line:
+    fs-0ade7bbed0f8ae478.efs.us-west-1.amazonaws.com:/ /home/ec2-user/ldbc_snb_efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0
+08. sudo mount -a  
+09. sudo rm -f /etc/yum.repos.d/bintray-rpm.repo
+10. curl -L https://www.scala-sbt.org/sbt-rpm.repo > sbt-rpm.repo
+11. sudo mv sbt-rpm.repo /etc/yum.repos.d/
+12. sudo yum install java-11-amazon-corretto-headless
+13. cd ldbc_snb_datagen_spark
+14. sbt assembly
+15. sudo yum install openssl-devel bzip2-devel libffi-devel gcc gcc-c++ make
+16. python3 -m pip install --upgrade pip
+17. pip3 install virtualenv
+18. virtualenv venv
+19. source venv/bin/activate
+20. pip install ./tools
+21. ./scripts/get-spark-to-home.sh
+22. ./scripts/build.sh
+23. vi ~/ldbc_snb_datagen_spark/activate-env.sh  # Add the following lines:
+    #!/bin/bash
+    source /home/ec2-user/ldbc_snb_datagen_spark/venv/bin/activate
+    export PLATFORM_VERSION=$(sbt -batch -error 'print platformVersion')
+    export DATAGEN_VERSION=$(sbt -batch -error 'print version')
+    export LDBC_SNB_DATAGEN_JAR=$(sbt -batch -error 'print assembly / assemblyOutputPath')
+    export PATH=$PATH:/home/ec2-user/spark-3.2.2-bin-hadoop3.2/bin
+24. chmod +x ~/ldbc_snb_datagen_spark/activate-env.sh
+
+#   Restart here...
+25. cd ldbc_snb_datagen_spark
+26. source ~/ldbc_snb_datagen_spark/activate-env.sh
+27. mkdir ~/ldbc_snb_efs/sf-1
+28. ./tools/run.py --parallelism 32 --memory 100G -- --format csv --scale-factor 1 --explode-edges --mode bi --format-options header=false,quoteAll=true --output-dir /home/ec2-user/ldbc_snb_efs/sf-1 --generate-factors
+
+#   Upgrade instance to m5.8xlarge and generate the data
+29. source ~/ldbc_snb_datagen_spark/activate-env.sh ; mkdir ~/ldbc_snb_efs/sf-300
+30. ./tools/run.py --parallelism 32 --memory 100G -- --format csv --scale-factor 300 --explode-edges --mode bi --format-options header=false,quoteAll=true --output-dir /home/ec2-user/ldbc_snb_efs/sf-300 --generate-factors
+
+#   Restart here (just to be safe)
+31. git clone https://github.com/ldbc/ldbc_snb_interactive_driver.git
+32. git clone https://github.com/ldbc/ldbc_snb_bi.git
+33. cd ldbc_snb_interactive_driver
+34. sudo amazon-linux-extras enable python3.8 ; sudo yum install python3.8
+35. python3.8 -m venv venv
+36. vi ~/ldbc_snb_interactive_driver/activate-env.sh  # Add the following lines:
+    #!/bin/bash
+    source /home/ec2-user/ldbc_snb_interactive_driver/venv/bin/activate
+    export PLATFORM_VERSION=$(sbt -batch -error 'print platformVersion')
+    export DATAGEN_VERSION=$(sbt -batch -error 'print version')
+    export LDBC_SNB_DATAGEN_JAR=$(sbt -batch -error 'print assembly / assemblyOutputPath')
+    export PATH=$PATH:/home/ec2-user/spark-3.2.2-bin-hadoop3.2/bin
+37. chmod +x ~/ldbc_snb_interactive_driver/activate-env.sh
+38. source ~/ldbc_snb_interactive_driver/activate-env.sh
+39. pip install duckdb==0.6.1 pytz networkit pandas 
+
+#   Generate both SF1 and SF300 interactive workload parameters
+40. export SF=1 ; export LDBC_SNB_DATAGEN_MAX_MEM=100G ; export LDBC_SNB_DATA_ROOT_DIRECTORY=/home/ec2-user/ldbc_snb_efs/sf-1/
+41. export LDBC_SNB_FACTOR_TABLES_DIR=${LDBC_SNB_DATA_ROOT_DIRECTORY}/factors/parquet/raw/composite-merged-fk
+42. ./paramgen/scripts/paramgen.sh
+43. mkdir ~/ldbc_snb_efs/sf-1/parameters ; mv /home/ec2-user/ldbc_snb_interactive_driver/parameters/* ~/ldbc_snb_efs/sf-1/parameters
+44. export SF=300 ; export LDBC_SNB_DATAGEN_MAX_MEM=100G ; export LDBC_SNB_DATA_ROOT_DIRECTORY=/home/ec2-user/ldbc_snb_efs/sf-300/
+45. export LDBC_SNB_FACTOR_TABLES_DIR=${LDBC_SNB_DATA_ROOT_DIRECTORY}/factors/parquet/raw/composite-merged-fk
+46. ./paramgen/scripts/paramgen.sh
+47. mkdir ~/ldbc_snb_efs/sf-300/parameters ; mv /home/ec2-user/ldbc_snb_interactive_driver/parameters/* ~/ldbc_snb_efs/sf-300/parameters
+
+#   Generate both SF1 and SF300 bi workload parameters
+48. rm -rf ~/ldbc_snb_bi/paramgen/scratch/factors/* ;  cp -r ~/ldbc_snb_efs/sf-1/factors/parquet/raw/composite-merged-fk/* ~/ldbc_snb_bi/paramgen/scratch/factors/
+49. export SF=1
+50. cd ~/ldbc_snb_bi/paramgen
+51. scripts/paramgen.sh
+52. export SF=300
+53. rm -rf ~/ldbc_snb_bi/paramgen/scratch/factors/* ;  cp -r ~/ldbc_snb_efs/sf-300/factors/parquet/raw/composite-merged-fk/* ~/ldbc_snb_bi/paramgen/scratch/factors/
+54. scripts/paramgen.sh
+55. mv ~/ldbc_snb_bi/parameters/parameters-sf1/* ~/ldbc_snb_efs/sf-1/parameters
+56. mv ~/ldbc_snb_bi/parameters/parameters-sf300/* ~/ldbc_snb_efs/sf-300/parameters
+
+#   ...and repeat this for all scale-factors in between (SF3, SF10, SF30, SF100)

@@ -1,0 +1,59 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+FROM     ( FROM      ( FROM      GRAPH SNB.Native.SNBGraph
+                       MATCH     (person1:Person)<-[:HAS_CREATOR]-(message1:Message)-[:HAS_TAG]->(tag:Tag)
+                       LET       cp2 = ( FROM   GRAPH SNB.Native.SNBGraph
+                                         MATCH  (person1)<-[:KNOWS]-(person2:Person)<-[:HAS_CREATOR]-(message2:Message),
+                                                (message2)-[:HAS_TAG]->(tag)
+                                         WHERE  GET_DAY(message2.creationDate) = GET_DAY($dateA)
+                                         SELECT VALUE COUNT(DISTINCT person2.id) )[0]
+                        WHERE    tag.name = $tagA AND
+                                 cp2 < $maxKnowsLimit AND
+                                 GET_YEAR(message1.creationDate) = 2012
+                        GROUP BY person1.id AS id
+                        SELECT   id,
+                                 COUNT(DISTINCT message1.id) AS messageCount ) mc
+           SELECT    mc.id,
+                     messageCount AS messageCountA,
+                     0 AS messageCountB
+           UNION ALL
+           FROM      ( FROM      GRAPH SNB.Native.SNBGraph
+                       MATCH     (person1:Person)<-[:HAS_CREATOR]-(message1:Message)-[:HAS_TAG]->(tag:Tag)
+                       LET       cp2 = ( FROM   GRAPH SNB.Native.SNBGraph
+                                         MATCH  (person1)<-[:KNOWS]-(person2:Person)<-[:HAS_CREATOR]-(message2:Message),
+                                                (message2)-[:HAS_TAG]->(tag)
+                                         WHERE  GET_DAY(message2.creationDate) = GET_DAY($dateB)
+                                         SELECT VALUE COUNT(DISTINCT person2.id) )[0]
+                        WHERE    tag.name = $tagB AND
+                                 cp2 < $maxKnowsLimit AND
+                                 GET_YEAR(message1.creationDate) = 2012
+                        GROUP BY person1.id AS id
+                        SELECT   id,
+                                 COUNT(DISTINCT message1.id) AS messageCount ) mc
+           SELECT    mc.id,
+                     0 AS messageCountA,
+                     mc.messageCount AS messageCountB ) t
+GROUP BY t.id
+SELECT   t.id,
+         SUM(messageCountA) AS messageCountA,
+         SUM(messageCountB) AS messageCountB
+ORDER BY messageCountA + messageCountB DESC,
+         t.id ASC
+LIMIT    $limit;

@@ -1,0 +1,96 @@
+{
+  "workload": [
+    {
+      "queryFile": "bi-5-v1.sqlpp",
+      "parameterFiles": [
+        "bi-5.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-5-v2.sqlpp",
+      "parameterFiles": [
+        "bi-5.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-6.sqlpp",
+      "parameterFiles": [
+        "bi-6.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-7-v1.sqlpp",
+      "parameterFiles": [
+        "bi-7.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-7-v2.sqlpp",
+      "parameterFiles": [
+        "bi-7.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-8.sqlpp",
+      "parameterFiles": [
+        "bi-8a.csv",
+        "bi-8b.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-14-v1.sqlpp",
+      "parameterFiles": [
+        "bi-14a.csv",
+        "bi-14b.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-14-v2.sqlpp",
+      "parameterFiles": [
+        "bi-14a.csv",
+        "bi-14b.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-16.sqlpp",
+      "parameterFiles": [
+        "bi-16a.csv",
+        "bi-16b.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-18-v1.sqlpp",
+      "parameterFiles": [
+        "bi-18.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    },
+    {
+      "queryFile": "bi-18-v2.sqlpp",
+      "parameterFiles": [
+        "bi-18.csv"
+      ],
+      "repeat": 10,
+      "timeout": 10800
+    }
+  ]
+}
