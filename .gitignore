@@ -1,10 +1,13 @@
 .idea/*
 *.DS_Store
-*.ipynb_checkpoints/*
+*/.ipynb_checkpoints/*
 */logs/*
 */results/*
 */scratch/*
 */asterixdb/*
+*/target/*
+*/asterix_nc/*
+*/tmp/*
 
 # Some user-specific directories.
 venv/*
@@ -14,9 +17,7 @@ graphix/*
 datagen/*
 !datagen/README
 
-
 # Some user-specific files.
 ldbc-snb-kp.pem
 ldbc-snb-profile
 synchronize.sh
-
