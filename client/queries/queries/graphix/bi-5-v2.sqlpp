@@ -20,13 +20,22 @@ SET        `compiler.cbo` "false";
 FROM       GRAPH SNB.Native.SNBGraph
 MATCH      (tag:Tag WHERE tag.name = $tag),
            (tag)<-/*+indexnl*/[:HAS_TAG]-(m:Message),
-           (m)-[:HAS_CREATOR]->(person:Person)
-LEFT MATCH (liker:Person)-[:LIKES]/*+indexnl*/->(m)
-LEFT MATCH (comment:Message)-[:REPLY_OF]/*+indexnl*/->(m)
+           (m)-/*+indexnl*/[:HAS_CREATOR]->(person:Person)
+LET        likers   = ( FROM   SNB.Native.Likes liker
+                        WHERE  liker.messageId /*+indexnl*/ = m.id
+                        SELECT VALUE liker.personId ),
+           comments = ( FROM   SNB.Native.Messages comment
+                        WHERE  comment.replyOfMessageId /*+indexnl*/ = m.id
+                        SELECT VALUE comment.id )
 GROUP BY   person.id AS personId
+GROUP AS   g
 LET        messageCount = COUNT(DISTINCT m.id),
-           likeCount    = COUNT(DISTINCT liker.id),
-           replyCount   = COUNT(DISTINCT comment.id)
+           likeCount    = ( FROM   g
+                            UNNEST g.likers liker
+                            SELECT VALUE COUNT(DISTINCT liker) )[0],
+           replyCount   = ( FROM   g
+                            UNNEST g.comments comment
+                            SELECT VALUE COUNT(DISTINCT comment) )[0]
 SELECT     personId,
            replyCount,
            likeCount,

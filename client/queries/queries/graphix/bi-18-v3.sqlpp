@@ -18,19 +18,20 @@
  */
 
 SET      `compiler.cbo` "false";
-LET      personsWithTags = ( FROM   GRAPH SNB.Native.SNBGraph
-                             MATCH  (tag:Tag WHERE tag.name = $tag),
-                                    (tag)<-/*+indexnl*/[:HAS_INTEREST]-(person:Person)
-                             SELECT DISTINCT VALUE person.id )
-FROM     personsWithTags person1Id
-JOIN     SNB.Native.Knows k1
-ON       person1Id /*+indexnl*/ = k1.startId
-JOIN     SNB.Native.Knows k2
-ON       k1.endId /*+indexnl*/ = k2.startId
-JOIN     personsWithTags person2Id
-ON       k2.endId /*+indexnl*/ = person2Id
-LET      mutualFriendId = k2.startId
-WHERE    NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
+LET      idPairs = ( FROM   GRAPH SNB.Native.SNBGraph
+                     MATCH  (tag:Tag WHERE tag.name = $tag),
+                            (tag)<-/*+indexnl*/[:HAS_INTEREST]-(person:Person),
+                            (person)-/*+indexnl*/[:KNOWS]->(mutualFriend:Person)
+                     SELECT person.id AS personId,
+                            mutualFriend.id AS friendId )
+FROM     idPairs idp1,
+         idPairs idp2
+LET      mutualFriendId = idp1.friendId,
+         person1Id = idp1.personId,
+         person2Id = idp2.personId
+WHERE    idp1.friendId = idp2.friendId AND
+         person1Id != person2Id AND
+         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
                       MATCH  (person1:Person)-[:KNOWS]->(person2:Person)
                       WHERE  person1.id /*+indexnl*/ = person1Id AND
                              person2.id /*+indexnl*/ = person2Id
