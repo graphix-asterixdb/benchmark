@@ -8,6 +8,12 @@
 */target/*
 */asterix_nc/*
 */tmp/*
+*/package/*
+
+# Some generated files / result files.
+*.log
+*.log.gz
+*.zip
 
 # Some user-specific directories.
 venv/*
@@ -21,3 +27,4 @@ datagen/*
 ldbc-snb-kp.pem
 ldbc-snb-profile
 synchronize.sh
+pull-results.sh
