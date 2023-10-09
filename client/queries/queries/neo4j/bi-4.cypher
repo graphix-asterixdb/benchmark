@@ -1,41 +1,34 @@
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations
-// under the License.
+MATCH (country:Country)<-[:IS_PART_OF]-(:City)<-[:IS_LOCATED_IN]-(person:Person)<-[:HAS_MEMBER]-(forum:Forum)
+WHERE forum.creationDate > $date
+WITH country, forum, count(person) AS numberOfMembers
+ORDER BY numberOfMembers DESC, forum.id ASC, country.id
+WITH DISTINCT forum AS topForum
+LIMIT 100
 
-MATCH          (country:Country)<-[:IS_PART_OF]-(city:City)<-[:IS_LOCATED_IN]-(member:Person)<-[:HAS_MEMBER]-(forum:Forum)
-WHERE          forum.creationDate > $date
-WITH           forum,
-               country,
-               COUNT(member) AS memberCount
-WITH           forum,
-               MAX(memberCount) AS memberCount
-ORDER BY       memberCount DESC
-LIMIT          100
-WITH           COLLECT(forum) AS topForums
-MATCH          (forum1:Forum), (person:Person)<-[:HAS_MEMBER]-(forum2:Forum)
-WHERE          forum1 IN topForums AND
-               forum2 IN topForums
-OPTIONAL MATCH (forum1)-[:CONTAINER_OF]->(:Post)<-[:REPLY_OF*0..]-(message:Message)-[:HAS_CREATOR]->(person)
-WITH           person,
-               COUNT(DISTINCT message) AS messageCount
-RETURN         person.id,
-               person.firstName,
-               person.lastName,
-               person.creationDate.epochMillis,
-               messageCount
-ORDER BY       messageCount DESC,
-               person.id ASC
-LIMIT          $limit;
+WITH collect(topForum) AS topForums
+
+CALL {
+  WITH topForums
+  UNWIND topForums AS topForum1
+  MATCH (topForum1)-[:CONTAINER_OF]->(post:Post)<-[:REPLY_OF*0..]-(message:Message)-[:HAS_CREATOR]->(person:Person)<-[:HAS_MEMBER]-(topForum2:Forum)
+  WITH person, message, topForum2
+  WHERE topForum2 IN topForums
+  RETURN person, count(DISTINCT message) AS messageCount
+UNION ALL
+  // Ensure that people who are members of top forums but have 0 messages are also returned.
+  // To this end, we return each person with a 0 messageCount
+  WITH topForums
+  UNWIND topForums AS topForum1
+  MATCH (person:Person)<-[:HAS_MEMBER]-(topForum1:Forum)
+  RETURN person, 0 AS messageCount
+}
+RETURN
+  person.id AS personId,
+  person.firstName AS personFirstName,
+  person.lastName AS personLastName,
+  person.creationDate AS personCreationDate,
+  sum(messageCount) AS messageCount
+ORDER BY
+  messageCount DESC,
+  person.id ASC
+LIMIT 100

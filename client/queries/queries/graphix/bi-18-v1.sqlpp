@@ -16,22 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+SET `graphix.evaluation.prefer-indexnl` "false";
 
-FROM     GRAPH SNB.Native.SNBGraph
-MATCH    (tag:Tag)<-[:HAS_INTEREST]-(person1:Person),
-         (person1)-[:KNOWS]->(mutualFriend:Person),
-         (mutualFriend)-[:KNOWS]->(person2:Person),
-         (person2)-[:HAS_INTEREST]->(tag)
-WHERE    tag.name = $tag AND
-         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                      MATCH  (person1)-[:KNOWS]->(person2)
-                      SELECT VALUE 1 )
-GROUP BY person1.id AS person1Id,
-         person2.id AS person2Id
-SELECT   person1Id,
-         person2Id,
-         COUNT(DISTINCT mutualFriend.id) AS mutualFriendCount
-ORDER BY mutualFriendCount DESC,
-         person1Id ASC,
-         person2Id ASC
-LIMIT    $limit;
+FROM
+    GRAPH SNB.Native.SNBGraph
+        (tag:Tag)<-[:HAS_INTEREST]-(person1:Person),
+        (person1)-[:KNOWS]->(mutualFriend:Person),
+        (mutualFriend)-[:KNOWS]->(person2:Person),
+        (person2)-[:HAS_INTEREST]->(tag)
+WHERE
+    tag.name = $tag AND
+    NOT EXISTS (
+        FROM
+            GRAPH SNB.Native.SNBGraph
+                (person1)-[:KNOWS]->(person2)
+        SELECT
+            1
+    )
+GROUP BY
+    person1.id AS person1Id,
+    person2.id AS person2Id
+SELECT
+    person1Id                       AS person1Id,
+    person2Id                       AS person2Id,
+    COUNT(DISTINCT mutualFriend.id) AS mutualFriendCount
+ORDER BY
+    mutualFriendCount DESC,
+    person1Id ASC,
+    person2Id ASC
+LIMIT
+    $limit;

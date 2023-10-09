@@ -16,31 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-SET        `compiler.cbo` "false";
-FROM       GRAPH SNB.Native.SNBGraph
-MATCH      (tag:Tag WHERE tag.name = $tag),
-           (tag)<-/*+indexnl*/[:HAS_TAG]-(m:Message),
-           (m)-/*+indexnl*/[:HAS_CREATOR]->(person:Person)
-LET        likers   = ( FROM   SNB.Native.Likes liker
-                        WHERE  liker.messageId /*+indexnl*/ = m.id
-                        SELECT VALUE liker.personId ),
-           comments = ( FROM   SNB.Native.Messages comment
-                        WHERE  comment.replyOfMessageId /*+indexnl*/ = m.id
-                        SELECT VALUE comment.id )
-GROUP BY   person.id AS personId
-GROUP AS   g
-LET        messageCount = COUNT(DISTINCT m.id),
-           likeCount    = ( FROM   g
-                            UNNEST g.likers liker
-                            SELECT VALUE COUNT(DISTINCT liker) )[0],
-           replyCount   = ( FROM   g
-                            UNNEST g.comments comment
-                            SELECT VALUE COUNT(DISTINCT comment) )[0]
-SELECT     personId,
-           replyCount,
-           likeCount,
-           messageCount,
-           ( messageCount + 2 * replyCount + 10 * likeCount ) AS score
-ORDER BY   score DESC,
-           personId ASC
-LIMIT      $limit;
+SET `graphix.evaluation.prefer-indexnl` "true";
+
+FROM
+    GRAPH SNB.Native.SNBGraph
+        (tag:Tag WHERE tag.name = $tag)<-[:HAS_TAG]-(m:Message)-[:HAS_CREATOR]->(person:Person),
+    SNB.Native.Likes liker,
+    SNB.Native.Messages comment
+WHERE
+    liker.messageId /*+indexnl*/ = m.id AND
+    comment.replyOfMessageId /*+indexnl*/ = m.id
+GROUP BY
+    person.id AS personId
+    GROUP AS g
+LET
+    messageCount = COUNT(DISTINCT m.id),
+    likeCount = ( FROM g SELECT VALUE COUNT(DISTINCT g.liker.personId) )[0],
+    replyCount = ( FROM g SELECT VALUE COUNT(DISTINCT g.comment.id) )[0]
+SELECT
+    personId,
+    replyCount,
+    likeCount,
+    messageCount,
+    ( messageCount + 2 * replyCount + 10 * likeCount ) AS score
+ORDER BY
+    score DESC,
+    personId ASC
+LIMIT
+    $limit;

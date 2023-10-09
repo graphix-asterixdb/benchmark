@@ -21,9 +21,9 @@
 // This script is used to define our internal / fully managed datasets, in the "SNB.Native" dataverse.
 //
 
-DROP   DATAVERSE SNB.Native IF EXISTS;
+DROP DATAVERSE SNB.Native IF EXISTS;
 CREATE DATAVERSE SNB.Native;
-USE    SNB.Native;
+USE SNB.Native;
 
 CREATE TYPE MessageType AS {
     id               : bigint,
@@ -60,10 +60,14 @@ CREATE TYPE PersonType AS {
     placeId      : bigint,
     language     : [string],
     email        : [string],
-    universities : [{ organizationId : bigint,
-                      classYear      : int }],
-    companies    : [{ organizationId : bigint,
-                      workFrom       : int }]
+    universities : [{
+        organizationId : bigint,
+        classYear      : int
+    }],
+    companies    : [{
+        organizationId : bigint,
+        workFrom       : int
+    }]
 };
 CREATE TYPE KnowsType AS {
     startId      : bigint,

@@ -16,19 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+SET `graphix.evaluation.prefer-indexnl` "false";
 
-FROM     GRAPH SNB.Native.SNBGraph
-MATCH    (tag:Tag)<-[:HAS_TAG]-(message:Message),
-         (message)<-[:REPLY_OF]-(comment:Message),
-         (comment)-[:HAS_TAG]->(relatedTag:Tag)
-WHERE    tag.name = $tag AND
-         comment.isPost = FALSE AND
-         NOT EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                      MATCH  (comment)-[:HAS_TAG]->(tag)
-                      SELECT VALUE 1 )
-GROUP BY relatedTag
-SELECT   relatedTag.name,
-         COUNT(comment.id) AS commentCount
-ORDER BY commentCount DESC,
-         relatedTag.name ASC
-LIMIT    $limit;
+FROM
+    GRAPH SNB.Native.SNBGraph
+        (tag:Tag)<-[:HAS_TAG]-(:Message)<-[:REPLY_OF]-(comment:Message),
+        (comment)-[:HAS_TAG]->(relatedTag:Tag)
+WHERE
+    tag.name = $tag AND
+    NOT comment.isPost AND
+    NOT EXISTS (
+        FROM
+            GRAPH SNB.Native.SNBGraph
+                (comment)-[:HAS_TAG]->(tag)
+        SELECT
+            1
+    )
+GROUP BY
+    relatedTag
+SELECT
+    relatedTag.name   AS tagName,
+    COUNT(comment.id) AS commentCount
+ORDER BY
+    commentCount DESC,
+    tagName ASC
+LIMIT
+    $limit;

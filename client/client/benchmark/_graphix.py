@@ -47,7 +47,8 @@ class GraphixBenchmarkClient(AbstractBenchmarkClient):
                             help='URI pointing to the AsterixDB CC API endpoint.')
         parser.add_argument('--retries', type=int, default=1, help='Number of time to retry a failed query.')
         parser.add_argument('--seed', type=int, default=0, help='Seed to use for random number generator.')
-        parser.add_argument('--config', type=str, default='graphix.json', help='Path to the (benchmark) config file.')
+        parser.add_argument('--config', type=str, default='config/graphix.json',
+                            help='Path to the (benchmark) configuration file.')
         parser.add_argument('--notes', type=str, default='', help='Any notes to append to each log entry.')
         parser.add_argument('--notify', default=False, action='store_true', help='Toggle to notify on finish.')
         parser.add_argument('--debug', default=False, action='store_true', help='Toggle to enable debug mode.')

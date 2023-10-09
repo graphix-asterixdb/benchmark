@@ -1,38 +1,17 @@
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations
-// under the License.
-
-MATCH    (person:Person)<-[:HAS_CREATOR]-(message:Message)<-[likes:LIKES]-(friend:Person)
-WHERE    person.id = $personId
-WITH     person,
-         message,
-         likes,
-         friend
-ORDER BY likes.creationDate DESC,
-         message.id ASC
-WITH     person,
-         friend,
-         HEAD(COLLECT({likeDate: likes.creationDate, message:message})) as likeInfo
-RETURN   friend.id,
-         friend.firstName,
-         friend.lastName,
-         likeInfo.likeDate.epochMillis,
-         likeInfo.message.id,
-         COALESCE(likeInfo.message.content, likeInfo.message.imageFile),
-         DURATION.BETWEEN(likeInfo.message.creationDate, likeInfo.likeDate).minutes AS minutesLatency,
-         NOT EXISTS((person)-[:KNOWS]-(friend)) AS isNew
-ORDER BY likeInfo.likeDate DESC, friend.id ASC
-LIMIT    $limit;
+MATCH (person:Person {id: $personId})<-[:HAS_CREATOR]-(message:Message)<-[like:LIKES]-(liker:Person)
+    WITH liker, message, like.creationDate AS likeTime, person
+    ORDER BY likeTime DESC, toInteger(message.id) ASC
+    WITH liker, head(collect({msg: message, likeTime: likeTime})) AS latestLike, person
+RETURN
+    liker.id AS personId,
+    liker.firstName AS personFirstName,
+    liker.lastName AS personLastName,
+    latestLike.likeTime AS likeCreationDate,
+    latestLike.msg.id AS commentOrPostId,
+    coalesce(latestLike.msg.content, latestLike.msg.imageFile) AS commentOrPostContent,
+    toInteger(floor(toFloat(latestLike.likeTime - latestLike.msg.creationDate)/1000.0)/60.0) AS minutesLatency,
+    not((liker)-[:KNOWS]-(person)) AS isNew
+ORDER BY
+    likeCreationDate DESC,
+    toInteger(personId) ASC
+LIMIT 20

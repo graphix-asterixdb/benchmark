@@ -1,0 +1,116 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+//
+// This script is part of ETL: using our external datasets, we transform and populate the internal datasets.
+//
+
+USE SNB.Native;
+
+INSERT INTO Messages (
+    FROM
+        SNB.FromDatagen.Post p,
+        SNB.FromDatagen.PostHasCreatorPerson phcp,
+        SNB.FromDatagen.PostIsLocatedInCountry pilic
+    LET
+        tags = (
+            FROM
+                SNB.FromDatagen.PostHasTagTag phtt
+            WHERE
+                phtt.PostId = p.id
+            SELECT VALUE
+                phtt.TagId
+        ),
+        forumId = (
+            FROM
+                SNB.FromDatagen.ForumContainerOfPost fcop
+            WHERE
+                fcop.PostId = p.id
+            SELECT VALUE
+                fcop.ForumId
+        )[0]
+    WHERE
+        p.id = phcp.PostId AND
+        p.id = pilic.PostId
+    SELECT
+        p.id                     AS id,
+        p.imageFile              AS imageFile,
+        /* A few parse errors show up here, so we'll make this field optional. */
+        DATETIME(p.creationDate) AS creationDate,
+        p.locationIP             AS locationIP,
+        p.browserUsed            AS browserUsed,
+        p.language               AS language,
+        p.content                AS content,
+        p.length                 AS length,
+        phcp.PersonId            AS creatorId,
+        forumId                  AS forumId,
+        pilic.CountryId          AS placeId,
+        /* replyOfMessageId does not exist for Posts. */
+        TRUE                     AS isPost,
+        tags                     AS tags
+);
+INSERT INTO Messages (
+    FROM
+        SNB.FromDatagen.Comment c,
+        SNB.FromDatagen.CommentHasCreatorPerson chcp,
+        SNB.FromDatagen.CommentIsLocatedInCountry cilic
+    LET
+        tags = (
+            FROM
+                SNB.FromDatagen.CommentHasTagTag chtt
+            WHERE
+                chtt.CommentId = c.id
+            SELECT VALUE
+                chtt.TagId
+        ),
+        replyOfCommentId = (
+            FROM
+                SNB.FromDatagen.CommentReplyOfComment cpoc
+            WHERE
+                cpoc.Comment1Id = c.id
+            SELECT VALUE
+                cpoc.Comment2Id
+        )[0],
+        replyOfPostId = (
+            FROM
+                SNB.FromDatagen.CommentReplyOfPost crop
+            WHERE
+                crop.CommentId = c.id
+            SELECT
+                VALUE crop.PostId
+        )[0]
+    WHERE
+        c.id = chcp.CommentId AND
+        c.id = cilic.CommentId
+    SELECT
+        c.id                                                AS id,
+        /* imageFile does not exist for Comments. */
+        /* A few parse errors show up here, so we'll make this field optional. */
+        DATETIME(c.creationDate)                            AS creationDate,
+        c.locationIP                                        AS locationIP,
+        c.browserUsed                                       AS browserUsed,
+        c.content                                           AS content,
+        c.length                                            AS length,
+        chcp.PersonId                                       AS creatorId,
+        /* forumId does not exist for Comments. */
+        cilic.CountryId                                     AS placeId,
+        IF_MISSING_OR_NULL(replyOfPostId, replyOfCommentId) AS replyOfMessageId,
+        FALSE                                               AS isPost,
+        tags                                                AS tags
+);

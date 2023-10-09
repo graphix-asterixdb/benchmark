@@ -1,30 +1,16 @@
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations
-// under the License.
-
-MATCH    (person:Person)-[:KNOWS*1..2]-(otherPerson:Person)-[w:WORK_AT]->(company:Company)-[:IS_LOCATED_IN]->(country:Country)
-WHERE    person.id = $personId AND
-         w.workFrom < $workFromYear AND
-         country.name = $countryName
-RETURN   DISTINCT otherPerson.id,
-                  otherPerson.firstName,
-                  otherPerson.lastName,
-                  company.name,
-                  w.workFrom
-ORDER BY w.workFrom ASC,
-         otherPerson.id ASC,
-         company.name DESC
-LIMIT    $limit;
+MATCH (person:Person {id: $personId })-[:KNOWS*1..2]-(friend:Person)
+WHERE not(person=friend)
+WITH DISTINCT friend
+MATCH (friend)-[workAt:WORK_AT]->(company:Company)-[:IS_LOCATED_IN]->(:Country {name: $countryName })
+WHERE workAt.workFrom < $workFromYear
+RETURN
+        friend.id AS personId,
+        friend.firstName AS personFirstName,
+        friend.lastName AS personLastName,
+        company.name AS organizationName,
+        workAt.workFrom AS organizationWorkFromYear
+ORDER BY
+        organizationWorkFromYear ASC,
+        toInteger(personId) ASC,
+        organizationName DESC
+LIMIT 10

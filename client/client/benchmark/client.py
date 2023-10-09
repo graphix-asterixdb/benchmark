@@ -276,6 +276,8 @@ class AbstractBenchmarkClient(abc.ABC):
             elif parameter_key.endswith('.csv'):
                 data_frame = pandas.read_csv(parameter_file, sep='|', header=0)
                 parameter_map[parameter_key] = data_frame
+            if parameter_map[parameter_key].empty:
+                LOGGER.warning('Parameter files are empty for: ' + parameter_file + '!')
 
         # Read in the raw query files into memory.
         query_map = dict()
@@ -318,7 +320,7 @@ class AbstractBenchmarkClient(abc.ABC):
             parameterized_query = self.construct_query(raw_query, parameters)
             LOGGER.info(f'Executing parameterized query:\n{parameterized_query}')
 
-            # To handle transient errors, a query may potentially be re-executed.
+            # To handle transient errors, a query may potentially re-execute.
             is_error, client_time, process = False, 0, None
             for r in range(self.retries):
                 execution_record_base = {

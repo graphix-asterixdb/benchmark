@@ -30,8 +30,8 @@ This instance was generated using the following commands:
    --parametersDir /mnt/efs/fs1/sf-300/parameters/ \
    --resultsDir /home/ec2-user/client/results \
    --logDir /home/ec2-user/client/logs \
-   --uri http://ec2-54-219-87-189.us-west-1.compute.amazonaws.com:19002 \
-   --restartCmd '/home/ec2-user/client/restart-database.sh builder' \
-   --config /home/ec2-user/client/graphix.json \
-   --notes "First run of May 16. 4-node cluster. Running queries BI-{5,6,7,8,14,16,18}."
-   --notify 
+   --uri http://localhost:19002 \
+   --restartCmd '/home/ec2-user/client/restart-database.sh graphix-A' \
+   --config /home/ec2-user/client/config/graphix.json \
+   --notes "Debug run. October 8. Just trying to see what runs." \
+   --debug

@@ -21,58 +21,31 @@
 // This script defines indexes on the "SNB.Native" datasets.
 //
 
-USE    SNB.Native;
+USE SNB.Native;
 
-CREATE INDEX messageForumIdIndex
-ON     Messages ( forumId );
-CREATE INDEX messageCreatorIdIndex
-ON     Messages ( creatorId );
-CREATE INDEX messagePlaceIdIndex
-ON     Messages ( placeId );
-CREATE INDEX messageReplyOfIndex
-ON     Messages ( replyOfMessageId );
-CREATE INDEX messageTagsIndex
-ON     Messages ( UNNEST tags )
-       EXCLUDE UNKNOWN KEY;
+CREATE INDEX messageForumIdIndex ON Messages ( forumId );
+CREATE INDEX messageCreatorIdIndex ON Messages ( creatorId );
+CREATE INDEX messagePlaceIdIndex ON Messages ( placeId );
+CREATE INDEX messageReplyOfIndex ON Messages ( replyOfMessageId );
+CREATE INDEX messageTagsIndex ON Messages ( UNNEST tags ) EXCLUDE UNKNOWN KEY;
 
-CREATE INDEX forumModeratorIdIndex
-ON     Forums ( moderatorId );
-CREATE INDEX forumTagIndex
-ON     Forums ( UNNEST tags )
-       EXCLUDE UNKNOWN KEY;
-CREATE INDEX forumPersonPersonIdIndex
-ON     ForumPerson ( personId );
+CREATE INDEX forumModeratorIdIndex ON Forums ( moderatorId );
+CREATE INDEX forumTagIndex ON Forums ( UNNEST tags ) EXCLUDE UNKNOWN KEY;
+CREATE INDEX forumPersonPersonIdIndex ON ForumPerson ( personId );
 
-CREATE INDEX knowsEndPersonIndex
-ON     Knows ( endId );
+CREATE INDEX knowsEndPersonIndex ON Knows ( endId );
 
-CREATE INDEX personPlaceIdIndex
-ON     Persons ( placeId );
-CREATE INDEX personUniversitiesIndex
-ON     Persons ( UNNEST universities
-                 SELECT organizationId )
-       EXCLUDE UNKNOWN KEY;
-CREATE INDEX personsCompaniesIndex
-ON     Persons ( UNNEST companies
-                 SELECT organizationId )
-       EXCLUDE UNKNOWN KEY;
+CREATE INDEX personPlaceIdIndex ON Persons ( placeId );
+CREATE INDEX personUniversitiesIndex ON Persons ( UNNEST universities SELECT organizationId ) EXCLUDE UNKNOWN KEY;
+CREATE INDEX personsCompaniesIndex ON Persons ( UNNEST companies SELECT organizationId ) EXCLUDE UNKNOWN KEY;
 
-CREATE INDEX personTagTagIdIndex
-ON     PersonTag ( tagId );
-CREATE INDEX likesMessageIdIndex
-ON     Likes ( messageId );
+CREATE INDEX personTagTagIdIndex ON PersonTag ( tagId );
+CREATE INDEX likesMessageIdIndex ON Likes ( messageId );
 
-CREATE INDEX tagTagClassIdIndex
-ON     Tags ( tagClassId );
-CREATE INDEX tagClassesSubclassOfIndex
-ON     TagClasses ( isSubclassOf );
+CREATE INDEX tagTagClassIdIndex ON Tags ( tagClassId );
+CREATE INDEX tagClassesSubclassOfIndex ON TagClasses ( isSubclassOf );
 
-CREATE INDEX universitiesPlaceIdIndex
-ON     Universities ( placeId );
-CREATE INDEX companiesPlaceIdIndex
-ON     Companies ( placeId );
-CREATE INDEX citiesContainerIdIndex
-ON     Cities ( containerId );
-CREATE INDEX countriesContainerIdIndex
-ON     Countries ( containerId );
-
+CREATE INDEX universitiesPlaceIdIndex ON Universities ( placeId );
+CREATE INDEX companiesPlaceIdIndex ON Companies ( placeId );
+CREATE INDEX citiesContainerIdIndex ON Cities ( containerId );
+CREATE INDEX countriesContainerIdIndex ON Countries ( containerId );

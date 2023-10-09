@@ -16,25 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+SET `graphix.evaluation.prefer-indexnl` "true";
 
-SET      `compiler.cbo` "false";
-FROM     GRAPH SNB.Native.SNBGraph
-MATCH    (person:Person WHERE person.id = $personId),
-         (person)-[:KNOWS]/*+indexnl*/->(friend:Person),
-         (friend)<-/*+indexnl*/[:HAS_CREATOR]-(post:Message),
-         (post)-[:HAS_TAG]/*+indexnl*/->(tag:Tag),
-         (person)-/*+indexnl*/[:KNOWS]->(otherPerson:Person),
-         (otherPerson)<-/*+indexnl*/[:HAS_CREATOR]-(post2:Message)
-LET      endDate = $startDate + DURATION("P" + $durationDays + "D")
-WHERE    post.isPost = TRUE AND
-         post2.isPost = TRUE AND
-         $startDate <= post.creationDate AND
-         post.creationDate < endDate AND
-         post2.creationDate < $startDate AND
-         tag.id NOT IN post2.tags
-GROUP BY tag.name AS tagName
-SELECT   tagName,
-         COUNT(DISTINCT post.id) as postCount
-ORDER BY postCount DESC,
-         tagName ASC
-LIMIT    $limit;
+FROM
+    GRAPH SNB.Native.SNBGraph
+        (person:Person WHERE person.id = $personId),
+        (person)-[:KNOWS]->(:Person)<-[:HAS_CREATOR]-(post:Message),
+        (post)-[:HAS_TAG]->(tag:Tag),
+        (person)-[:KNOWS]->(:Person)<-[:HAS_CREATOR]-(post2:Message)
+LET
+    endDate = $startDate + DURATION("P" + $durationDays + "D")
+WHERE
+    post.isPost AND
+    post2.isPost AND
+    ( post.creationDate BETWEEN $startDate AND endDate ) AND
+    ( post2.creationDate BETWEEN $startDate AND endDate ) AND
+    tag.id NOT IN post2.tags
+GROUP BY
+    tag.name AS tagName
+SELECT
+    tagName                 AS tagName,
+    COUNT(DISTINCT post.id) AS postCount
+ORDER BY
+    postCount DESC,
+    tagName ASC
+LIMIT
+    $limit;

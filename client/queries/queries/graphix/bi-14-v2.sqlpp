@@ -17,50 +17,71 @@
  * under the License.
  */
 
-SET      `compiler.cbo` "false";
-WITH     scores AS ( FROM   GRAPH SNB.Native.SNBGraph
-                     MATCH  (country1:Country)<-[:IS_PART_OF]-(city1:City),
-                            (country2:Country)<-[:IS_PART_OF]-(city2:City),
-                            (city1)<-[:IS_LOCATED_IN]-(person1:Person),
-                            (city2)<-[:IS_LOCATED_IN]-(person2:Person),
-                            (person1)-[:KNOWS]->(person2)
-                     LET    c1    = EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                                             MATCH  (person1)<-[:HAS_CREATOR]-(m:Message),
-                                                    (m)-[:REPLY_OF]->(n:Message),
-                                                    (n)-[:HAS_CREATOR]->(person2)
-                                             SELECT VALUE 1 ),
-                            c2    = EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                                             MATCH  (person1)<-[:HAS_CREATOR]-(m:Message),
-                                                    (m)<-[:REPLY_OF]-(n:Message),
-                                                    (n)-[:HAS_CREATOR]->(person2)
-                                             SELECT VALUE 1 ),
-                            c3    = EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                                             MATCH  (person1)-[:LIKES]->(n:Message),
-                                                    (n)-[:HAS_CREATOR]->(person2)
-                                             SELECT VALUE 1 ),
-                            c4    = EXISTS ( FROM   GRAPH SNB.Native.SNBGraph
-                                             MATCH  (person1)<-[:HAS_CREATOR]-(n:Message),
-                                                    (n)<-[:LIKES]-(person2)
-                                             SELECT VALUE 1 ),
-                            score = SWITCH_CASE(c1, TRUE, 4, FALSE, 0) + SWITCH_CASE(c2, TRUE, 1, FALSE, 0) +
-                                    SWITCH_CASE(c3, TRUE, 10, FALSE, 0) + SWITCH_CASE(c4, TRUE, 1, FALSE, 0)
-                     WHERE  country1.name = $country1 AND
-                            country2.name = $country2
-                     SELECT DISTINCT person1.id AS person1Id,
-                                     person2.id AS person2Id,
-                                     city1.name AS city,
-                                     score )
-FROM     scores s
-GROUP BY s.city
-GROUP AS g
-LET      result = ( FROM     g
-                    SELECT   g.s.person1Id,
-                             g.s.person2Id,
-                             g.s.city,
-                             g.s.score
-                    ORDER BY g.s.score DESC
-                    LIMIT    1 )[0]
-SELECT   VALUE result
-ORDER BY result.score DESC,
-         result.person1Id ASC,
-         result.person2Id ASC;
+FROM
+    (
+        FROM
+            GRAPH SNB.Native.SNBGraph
+                (person1:Person)-[:KNOWS]->(person2:Person),
+                (person1)-[:IS_LOCATED_IN]->(city1:City)-[:IS_PART_OF]->(country1:Country),
+                (person2)-[:IS_LOCATED_IN]->(city2:City)-[:IS_PART_OF]->(country2:Country)
+        LET
+            c1 = EXISTS (
+                FROM
+                    GRAPH SNB.Native.SNBGraph
+                        (person1)<-[:HAS_CREATOR]-(:Message)-[:REPLY_OF]->(:Message)-[:HAS_CREATOR]->(person2)
+                SELECT
+                    1
+            ),
+            c2 = EXISTS (
+                FROM
+                    GRAPH SNB.Native.SNBGraph
+                    MATCH
+                        (person1)<-[:HAS_CREATOR]-(:Message)<-[:REPLY_OF]-(:Message)-[:HAS_CREATOR]->(person2)
+                SELECT
+                    1
+            ),
+            c3 = EXISTS (
+                FROM
+                    GRAPH SNB.Native.SNBGraph
+                        (person1)-[:LIKES]->(:Message)-[:HAS_CREATOR]->(person2)
+                SELECT
+                    1
+            ),
+            c4 = EXISTS (
+                FROM
+                    GRAPH SNB.Native.SNBGraph
+                        (person1)<-[:HAS_CREATOR]-(:Message)<-[:LIKES]-(person2)
+                SELECT
+                    1
+            ),
+            c1c2Score = SWITCH_CASE(c1, TRUE, 4, FALSE, 0) + SWITCH_CASE(c2, TRUE, 1, FALSE, 0),
+            c3c4Score = SWITCH_CASE(c3, TRUE, 10, FALSE, 0) + SWITCH_CASE(c4, TRUE, 1, FALSE, 0)
+        WHERE
+            country1.name = $country1 AND
+            country2.name = $country2
+        SELECT DISTINCT
+            person1.id            AS person1Id,
+            person2.id            AS person2Id,
+            city1.name            AS city,
+            c1c2Score + c3c4Score AS score
+    ) AS s
+GROUP BY
+    s.city
+    GROUP AS g
+LET
+    result = (
+        FROM
+            g
+        SELECT VALUE
+            g.s
+        ORDER BY
+            g.s.score DESC
+        LIMIT
+            1
+    )[0]
+SELECT VALUE
+    result
+ORDER BY
+    result.score DESC,
+    result.person1Id ASC,
+    result.person2Id ASC;
