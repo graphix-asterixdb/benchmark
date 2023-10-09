@@ -125,6 +125,4 @@
       shell: printf "command=asterixnc\n" >> "{{ ccconf }}"
 
     - name: Populate Graphix extension specific portions to the cluster configuration file {{ ccconf }}.
-      shell: tail -n 13 "{{ playbook_dir }}/../conf/graphix-cc.conf" >> "{{ ccconf }}"
-
-
+      shell: tail -n 18 "{{ playbook_dir }}/../conf/graphix-cc.conf" >> "{{ ccconf }}"

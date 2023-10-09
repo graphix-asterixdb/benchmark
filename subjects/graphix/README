@@ -4,7 +4,7 @@ The purpose of this instance is to generate a Graphix cluster.
 This instance was generated using the following commands:
 01. sudo yum install git tmux htop
 02. # Copy the graphix package here from the development machine...
-03. cd graphix ; vi graphix-cc.conf ; cd ;
+03. cd graphix-A ; vi graphix-cc.conf ; cd ;
 04. pip3 install ansible
 05. pip3 install boto
 06. pip3 install boto3
@@ -26,11 +26,11 @@ This instance was generated using the following commands:
 ## Spawn AWS instances and deploy Graphix.
 13. ssh-agent bash 
 14. ssh-add ~/ldbc-snb-kp.pem 
-15. vi graphix/opt/aws/conf/aws_settings.yml
+15. vi graphix-A/opt/aws/conf/aws_settings.yml
     # Modify 'count: 1'
-16. cd ~/graphix/opt/aws/ ; ./bin/deploy.sh
+16. cd ~/graphix-A/opt/aws/ ; ./bin/deploy.sh
 17. ./bin/start.sh
 
 # Setup for SF300.
 18. ./bin/copy_raw.sh 300
-
+19. ./bin/setup.sh
