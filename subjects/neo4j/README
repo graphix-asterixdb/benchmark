@@ -35,10 +35,10 @@ This instance was generated using the following commands:
 16. export NEO4J_CSV_DIR=/data0/sf-${SF}/graphs/csv/bi/composite-projected-fk/initial_snapshot
 17. sudo -E ~/setup/import-datasets.sh
 
- #Start Neo4J (to build the database), then build the indices. 
-20. sudo neo4j-admin dbms set-initial-password FlyingPasswordColors2
+# Start Neo4J (to build the database), then build the indices.
+20. sudo neo4j-admin dbms set-initial-password xxxx
 21. sudo neo4j console
-22. cypher-shell -u neo4j -p FlyingPasswordColors2 < /home/ec2-user/setup/create-indices.cypher
+22. cypher-shell -u neo4j -p xxxx < /home/ec2-user/setup/create-indices.cypher
 
 
 
