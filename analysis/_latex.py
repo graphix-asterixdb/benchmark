@@ -48,7 +48,7 @@ class BusinessIntelligencePlotBuilder(_AbstractBuilder):
             'BI-5': r"\nextgroupplot[title={BI-5}]",
             'BI-7': r"\nextgroupplot[title={BI-7}]",
             'BI-8': r"\nextgroupplot[title={BI-8},ylabel={Execution Time (s)},xlabel={Number of Workers ($n$)}]",
-            'BI-11': r"\nextgroupplot[title={BI-11},xlabel={Number of Workers ($n$)}]",
+            'BI-14': r"\nextgroupplot[title={BI-14},xlabel={Number of Workers ($n$)}]",
             'BI-16': r"\nextgroupplot[title={BI-16},xlabel={Number of Workers ($n$)}]",
             'BI-18': r"\nextgroupplot[title={BI-18},xlabel={Number of Workers ($n$)}]"
         }
@@ -77,8 +77,8 @@ class BusinessIntelligencePlotBuilder(_AbstractBuilder):
             \end{groupplot}
           \end{tikzpicture}
           \caption{%
-            Several plots showing a Graphix cluster of varying size (in blue) against a Neo4J instance(in green) for the business intelligence queries \lstinline{BI-}$\{{1,2,5,8,11,16}\}$.
-            Neo4J did not finish under 5 hours for queries \lstinline{BI-\{2,8,16\}}, and raised an out-of-memory error for \lstinline{BI-11}.
+            Several plots showing a Graphix cluster of varying size (in blue) against a Neo4J instance (in green) for the business intelligence queries \lstinline{BI-}$\{{1,2,5,8,14,16,18}\}$.
+            Neo4J did not finish under 5 hours for queries \lstinline{BI-\{2,8,14,16\}}.
           }
           \label{fig:biPlot}
         \end{figure*}
@@ -169,7 +169,6 @@ class TableBuilder(_AbstractBuilder):
             'BI-5': r"\lstinline{BI-5}",
             'BI-7': r"\lstinline{BI-7}",
             'BI-8': r"\lstinline{BI-8}",
-            'BI-11': r"\lstinline{BI-11}",
             'BI-16': r"\lstinline{BI-16}",
             'BI-14': r"\lstinline{BI-14}",
             'BI-18': r"\lstinline{BI-18}"
