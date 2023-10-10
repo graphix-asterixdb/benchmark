@@ -25,7 +25,7 @@ FROM
         (otherPerson)<-[:HAS_CREATOR]-(m2:Message)-[:IS_LOCATED_IN]->(countryY:Country),
         (otherPerson)-[:IS_LOCATED_IN]->(city:City)
 LET
-    endDate = $startDate + DURATION("P" + $durationDays + "D")
+    endDate = $startDate + DURATION(CONCAT("P", TO_STRING($durationDays), "D"))
 WHERE
     ( m1.creationDate BETWEEN $startDate AND endDate ) AND
     ( m2.creationDate BETWEEN $startDate AND endDate ) AND

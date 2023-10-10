@@ -29,7 +29,7 @@ LET
             person.id                AS personId,
             expertCandidatePerson.id AS expertCandidatePersonId
         HAVING
-            MIN(LEN(EDGES(k))) BETWEEN $minMathDistance AND $maxPathDistance
+            MIN(LEN(EDGES(k))) BETWEEN $minPathDistance AND $maxPathDistance
         SELECT VALUE
             expertCandidatePersonId
     )

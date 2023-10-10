@@ -62,7 +62,7 @@ LET
         FROM
             g
         LET
-            cost = ( FROM EDGES(g.k) SELECT VALUE SUM(weight) )[0]
+            cost = ( FROM EDGES(g.k) ke SELECT VALUE SUM(ke.weight) )[0]
         SELECT VALUE
             cost
         ORDER BY
