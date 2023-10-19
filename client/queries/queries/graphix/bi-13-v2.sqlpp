@@ -17,7 +17,6 @@
  * under the License.
  */
 SET `graphix.semantics.pattern` "edge-isomorphism";
-SET `graphix.evaluation.prefer-indexnl` "false";
 
 LET
     zombies = (

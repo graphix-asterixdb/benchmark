@@ -20,21 +20,27 @@
 LET
     personMessages = (
         FROM
-            GRAPH SNB.Native.SNBGraph
-                (person:Person)
-            LEFT MATCH
-                (person)<-[:HAS_CREATOR]-(message:Message)-[:REPLY_OF*]->(post:Message)
-        WHERE
-            message.content IS NOT NULL AND
-            message.length < $lengthThreshold AND
-            message.creationDate > $startDate AND
-            post.language IN $languages AND
-            post.isPost
+            SNB.Native.Persons p
+            LEFT JOIN
+                (
+                    FROM
+                        GRAPH SNB.Native.SNBGraph
+                            (message:Message)-[:REPLY_OF*]->(post:Message)
+                    WHERE
+                        message.content IS NOT NULL AND
+                        message.length < $lengthThreshold AND
+                        message.creationDate > $startDate AND
+                        post.language IN $languages AND
+                        post.isPost
+                    SELECT
+                        message.id,
+                        message.creatorId
+                ) postMessages ON postMessages.creatorId = p.id
         GROUP BY
-            person.id AS personId
+            p.id AS personId
         SELECT
-            personId          AS personId,
-            COUNT(message.id) AS messageCount
+            personId               AS personId,
+            COUNT(postMessages.id) AS messageCount
     )
 FROM
     personMessages pm

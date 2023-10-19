@@ -20,7 +20,7 @@ SET `graphix.evaluation.prefer-indexnl` "true";
 
 FROM
     GRAPH SNB.Native.SNBGraph
-        (person:Person WHERE person.id = $personId)-[:KNOWS{1,2}]->(otherPerson:Person)
+        (person:Person WHERE person.id = $personId)-[:KNOWS{1,2}]->(otherPerson:Person),
         (otherPerson)<-[h:HAS_MEMBER]-(forum:Forum)
     LEFT MATCH
         (forum)-[:CONTAINER_OF]->(post:Message WHERE post.isPost),

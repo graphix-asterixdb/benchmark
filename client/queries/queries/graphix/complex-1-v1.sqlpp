@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-SET `graphix.evaluation.prefer-indexnl` "true";
+SET `graphix.evaluation.prefer-indexnl` "false";
 
 FROM
     GRAPH SNB.Native.SNBGraph
@@ -26,23 +26,27 @@ FROM
 LET
     companies = (
         FROM
+            otherPerson.companies opc,
             GRAPH SNB.Native.SNBGraph
-                (otherPerson)-[w:WORK_AT]->(company:Company),
-                (company)-[:IS_LOCATED_IN]->(companyCountry:Country)
+                (company:Company)-[:IS_LOCATED_IN]->(companyCountry:Country)
+        WHERE
+            opc.organizationId = company.id
         SELECT
             company.name        AS companyName,
-            w.workFrom          AS workFrom,
+            company.workFrom    AS workFrom,
             companyCountry.name AS countryName
     ),
     universities = (
         FROM
+            otherPerson.universities opu,
             GRAPH SNB.Native.SNBGraph
-                (otherPerson)-[s:STUDY_AT]->(university:University),
-                (university)-[:IS_LOCATED_IN]->(universityCity:City)
+                (university:University)-[:IS_LOCATED_IN]->(universityCity:City)
+        WHERE
+            opu.organizationId = university.id
         SELECT
-            university.name     AS universityName,
-            s.classYear         AS classYear,
-            universityCity.name AS cityName
+            university.name      AS universityName,
+            university.classYear AS classYear,
+            universityCity.name  AS cityName
     )
 WHERE
     otherPerson.firstName = $firstName
