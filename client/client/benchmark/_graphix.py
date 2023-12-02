@@ -23,6 +23,7 @@ import multiprocessing
 import numbers
 import os
 import re
+import time
 import typing
 
 import requests
@@ -45,7 +46,6 @@ class GraphixBenchmarkClient(AbstractBenchmarkClient):
         parser.add_argument('--restartCmd', type=str, required=True, help='Command to execute when a timeout occurs.')
         parser.add_argument('--uri', type=str, default='http://localhost:19002',
                             help='URI pointing to the AsterixDB CC API endpoint.')
-        parser.add_argument('--retries', type=int, default=1, help='Number of time to retry a failed query.')
         parser.add_argument('--seed', type=int, default=0, help='Seed to use for random number generator.')
         parser.add_argument('--config', type=str, default='config/graphix.json',
                             help='Path to the (benchmark) configuration file.')
@@ -66,7 +66,6 @@ class GraphixBenchmarkClient(AbstractBenchmarkClient):
             'queryDir': parser_args.queryDir,
             'parametersDir': parser_args.parametersDir,
             'restartCmd': parser_args.restartCmd,
-            'retries': parser_args.retries,
             'notes': parser_args.notes,
             'seed': parser_args.seed,
             'logFile': log_file,
@@ -122,7 +121,7 @@ class GraphixBenchmarkClient(AbstractBenchmarkClient):
                 timeout=query_spec['timeout']
             ))
         super().__init__(query_files, parameter_files, result_file, log_file, parser_args.restartCmd, specification,
-                         parser_args.retries, parser_args.seed, parser_args.notify, parser_args.debug, client_config)
+                         parser_args.seed, parser_args.notify, parser_args.debug, client_config)
 
     def _execute_request(self, query: str, is_profile: bool = False, is_explain: bool = False) -> typing.Dict:
         try:
@@ -140,12 +139,30 @@ class GraphixBenchmarkClient(AbstractBenchmarkClient):
                                       'rewritten-expression-tree': 'true'}
                 if is_explain:
                     api_parameters = {**api_parameters, 'compile-only': 'true'}
-            response = requests.post(self.config['endpoint'], api_parameters).json()
+
+            # If our request gets refused, then we need to retry.
+            while True:
+                try:
+                    response = requests.post(self.config['endpoint'], api_parameters).json()
+                    break
+                except requests.exceptions.ConnectionError as e:
+                    LOGGER.warning(f'Request has been refused: {str(e)}')
+                    time.sleep(60)
+                    LOGGER.warning('Restarting our query now.')
+
+            # Return our response.
             if response['status'] != 'success':
                 LOGGER.error(f'Error (non-success) returned from AsterixDB:\n{str(response)}')
-                if 'errors' in response and any('No space left on device' in e['msg'] for e in response['errors']):
-                    LOGGER.warning('Marking this out-of-space error as transient.')
-                    response['status'] = 'transient'
+                if 'errors' in response:
+                    if any('No space left on device' in e['msg'] for e in response['errors']):
+                        LOGGER.warning('Marking this out-of-space error as non-fatal.')
+                        response['status'] = 'non-fatal'
+                    elif any('has been cancelled' in e['msg'] for e in response['errors']):
+                        LOGGER.warning('Marking this cancelled request error as non-fatal.')
+                        response['status'] = 'non-fatal'
+                    else:
+                        LOGGER.error('Marking this error as non-fatal: but definitely look into this!')
+                        response['status'] = 'non-fatal'
             elif 'results' in response and len(response['results']) == 0:
                 LOGGER.warning(f"Zero results returned for query:\n{query}")
             return response

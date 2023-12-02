@@ -46,7 +46,6 @@ class Neo4jBenchmarkClient(AbstractBenchmarkClient):
         parser.add_argument('--restartCmd', type=str, required=True, help='Command to execute when a timeout occurs.')
         parser.add_argument('--uri', type=str, default='bolt://localhost:7687',
                             help='URI pointing to the Neo4J bolt endpoint.')
-        parser.add_argument('--retries', type=int, default=1, help='Number of time to retry a failed query.')
         parser.add_argument('--seed', type=int, default=0, help='Seed to use for random number generator.')
         parser.add_argument('--config', type=str, default='config/neo4j.json',
                             help='Path to the (benchmark) configuration file.')
@@ -68,7 +67,6 @@ class Neo4jBenchmarkClient(AbstractBenchmarkClient):
             'queryDir': parser_args.queryDir,
             'parametersDir': parser_args.parametersDir,
             'restartCmd': parser_args.restartCmd,
-            'retries': parser_args.retries,
             'notes': parser_args.notes,
             'seed': parser_args.seed,
             'logFile': log_file,
@@ -124,17 +122,17 @@ class Neo4jBenchmarkClient(AbstractBenchmarkClient):
                 timeout=query_spec['timeout']
             ))
         super().__init__(query_files, parameter_files, result_file, log_file, parser_args.restartCmd, specification,
-                         parser_args.retries, parser_args.seed, parser_args.notify, parser_args.debug, client_config)
+                         parser_args.seed, parser_args.notify, parser_args.debug, client_config)
 
     def _execute_request(self, query: str, is_profile: bool = False, is_explain: bool = False) -> typing.Dict:
         try:
             auth_tuple = (os.getenv('NEO4J_USERNAME'), os.getenv('NEO4J_PASSWORD'),)
-            driver = neo4j.GraphDatabase.driver(self.config['bolt'], auth=auth_tuple)
+            driver = neo4j.GraphDatabase.driver(self.config['bolt'], auth=auth_tuple, max_connection_lifetime=36000)
             with driver.session() as session:
                 explain_query, profile_query = f'EXPLAIN {query}', f'PROFILE {query}'
                 response = session.run(explain_query if is_explain else profile_query if is_profile else query)
 
-                # Handle our results. Different fields with show up in our result depending on the execution mode.
+                # Handle our results. Different fields show up in our result depending on the execution mode.
                 json_f = lambda j: json.dumps(j, default=lambda d: str(d))
                 results = {'results': json_f(response.data())}
                 result_summary = response.consume()
@@ -149,12 +147,15 @@ class Neo4jBenchmarkClient(AbstractBenchmarkClient):
 
         except neo4j.exceptions.TransientError as e:
             LOGGER.error(f'Transient exception thrown by Neo4J:\n{str(e)}')
-            return {'status': 'transient', 'messages': str(e)}
+            return {'status': 'non-fatal', 'messages': str(e)}
 
         # noinspection PyBroadException
         except Exception as e:
             LOGGER.error(f'Exception thrown by Neo4J:\n{str(e)}')
-            return {'status': 'error', 'message': str(e)}
+            if 'java.lang.OutOfMemoryError' in str(e):
+                return {'status': 'non-fatal', 'messages': str(e)}
+            else:
+                return {'status': 'error', 'message': str(e)}
 
     def explain_query(self, query: str) -> typing.Dict:
         response = self._execute_request(query, is_explain=True)

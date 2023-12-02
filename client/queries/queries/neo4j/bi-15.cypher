@@ -11,8 +11,8 @@ CALL gds.graph.project.cypher(
   'MATCH (pA:Person)-[knows:KNOWS]-(pB:Person)
       OPTIONAL MATCH (pA)<-[:HAS_CREATOR]-(m1:Message)-[r:REPLY_OF]-(m2:Message)-[:HAS_CREATOR]->(pB)
       OPTIONAL MATCH (m1)-[:REPLY_OF*0..]->(:Post)<-[:CONTAINER_OF]-(forum:Forum)
-              WHERE forum.creationDate >= datetime({epochmillis: ' + $startDate.epochMillis + '})
-                AND forum.creationDate <= datetime({epochmillis: ' + $endDate.epochMillis   + '})
+              WHERE forum.creationDate >= $startDate
+                AND forum.creationDate <= $endDate
       WITH pA, pB,
           sum(CASE forum IS NOT NULL
               WHEN true THEN

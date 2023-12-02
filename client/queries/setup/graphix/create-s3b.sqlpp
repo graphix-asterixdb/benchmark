@@ -18,35 +18,11 @@
  */
 
 //
-// This script is part of ETL: using our external datasets, we transform and populate the internal datasets.
+// This script is used to populate the "SNB.Native" datasets from transformed JSONL files of the "dynamic" entities.
 //
 
-USE SNB.Native;
-
-INSERT INTO Forums (
-    FROM
-        SNB.FromDatagen.Forum f
-    LET
-        tags = (
-            FROM
-                SNB.FromDatagen.ForumHasTagTag fhtt
-            WHERE
-                fhtt.ForumId = f.id
-            SELECT VALUE
-                fhtt.TagId
-        ),
-        moderatorId = (
-            FROM
-                SNB.FromDatagen.ForumHasModeratorPerson fhmp
-            WHERE
-                fhmp.ForumId = f.id
-            SELECT VALUE
-                fhmp.PersonId
-        )[0]
-    SELECT
-        f.id                     AS id,
-        f.title                  AS title,
-        DATETIME(f.creationDate) AS creationDate,
-        moderatorId              AS moderatorId,
-        tags                     AS tags
+LOAD  DATASET SNB.Native.Forums
+USING localfs (
+    ("path"="$DATA_PATH/Forums.adm"),
+    ("format"="adm")
 );

@@ -61,6 +61,9 @@ class ClientQuery:
     query_file: str
     timeout: int
 
+    def get_id(self) -> typing.Tuple[str, str]:
+        return self.parameter_file, self.query_file
+
 @dataclasses.dataclass
 class ExecutionStatistics:
     is_ended_in_error: bool = False
@@ -75,7 +78,7 @@ class AbstractBenchmarkClient(abc.ABC):
 
     def __init__(self, query_files: typing.Iterable[str], parameter_files: typing.Iterable[str], result_file: str,
                  log_file: str, restart_command: str, specification: typing.List[ClientQuerySpecification],
-                 retries: int, random_seed: int, is_notify: bool, is_debug: bool, config: typing.Dict):
+                 random_seed: int, is_notify: bool, is_debug: bool, config: typing.Dict):
         """
         :param query_files: Iterable of strings that correspond to query filenames.
         :param parameter_files: Iterable of strings that correspond to parameter filenames.
@@ -83,7 +86,6 @@ class AbstractBenchmarkClient(abc.ABC):
         :param log_file: File to write log entries to.
         :param restart_command: Space separated string indicating a bash command to restart the database.
         :param specification: List of queries to generate a benchmark for.
-        :param retries: Number of times to retry a failed query.
         :param random_seed: Random seed used for generating our workload.
         :param is_notify: Flag that determines whether we notify our user by email when the benchmark is done.
         :param is_debug: Flag that determines whether we are in debug mode or not.
@@ -92,10 +94,12 @@ class AbstractBenchmarkClient(abc.ABC):
         self.results_fp = open(result_file, 'w')
         self.parameter_files = parameter_files
         self.query_files = query_files
-        self.restart_command = restart_command
         self.is_debug = is_debug
-        self.retries = retries
         dotenv.load_dotenv()
+
+        # We want to keep track of how 'fresh' our system is for each query.
+        self.restart_command = restart_command
+        self.runs_since_restart = 0
 
         # We will log to the console and to a file.
         LOGGER.setLevel(logging.DEBUG if is_debug else logging.INFO)
@@ -119,12 +123,12 @@ class AbstractBenchmarkClient(abc.ABC):
         self.specification = specification
         LOGGER.info(f'Using the following configuration: {self.config}')
 
-    @staticmethod
-    def call_subprocess(command, is_log=True):
+    def restart_system(self, is_log=True):
+        self.runs_since_restart = 0
         subprocess_pipe = subprocess.Popen(
-            ['/bin/bash'] + command.split(' '),
+            ['/bin/bash'] + self.restart_command.split(' '),
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stderr=subprocess.DEVNULL,
             universal_newlines=True
         )
         resultant = ''
@@ -138,9 +142,13 @@ class AbstractBenchmarkClient(abc.ABC):
         return resultant
 
     def log_execution(self, results):
+        self.runs_since_restart += 1
+
+        # The following are parameters shared across all clients.
         results['logTime'] = str(datetime.datetime.now())
         results['executionID'] = self.execution_id
         results['clientClass'] = self.client_class
+        results['freshness'] = self.runs_since_restart
         results['config'] = self.config
 
         # To the results file.
@@ -289,30 +297,30 @@ class AbstractBenchmarkClient(abc.ABC):
         # Randomly generate a workload based on our given specification.
         random.seed(self.random_seed)
         workload = list()
-        for query in self.specification:
-            for _ in range(query.repeat):
-                for parameter_file in query.parameter_files:
+        for query_spec in self.specification:
+            for _ in range(query_spec.repeat):
+                for parameter_file in query_spec.parameter_files:
                     workload.append(ClientQuery(
                         parameter_file=parameter_file,
-                        query_file=query.query_file,
-                        timeout=query.timeout
+                        query_file=query_spec.query_file,
+                        timeout=query_spec.timeout
                     ))
         random.shuffle(workload)
-        blacklisted_queries = set()
 
         # Execute our restart command before starting the workload (to clear our cache).
         LOGGER.info(f'Restarting database using command: {self.restart_command}')
-        self.call_subprocess(self.restart_command, is_log=self.is_debug)
+        self.restart_system(is_log=self.is_debug)
+        blacklist = set()
 
         # Execute our workload.
         self.execution_statistics.start_time = datetime.datetime.now()
         t_execution_start = timeit.default_timer()
         for i, query in enumerate(workload):
-            if query.query_file in blacklisted_queries:
-                LOGGER.info(f'Skipping execution {i} for query file {query.query_file}.')
+            if query.get_id() in blacklist:
+                LOGGER.info(f'Skipping execution {i} for query {query.get_id()}.')
                 continue
             else:
-                LOGGER.info(f'Entering execution {i} using query file {query.query_file}.')
+                LOGGER.info(f'Entering execution {i} using qu`ery file {query.query_file}.')
 
             # Parameterize our query.
             raw_query = query_map[query.query_file]
@@ -320,73 +328,61 @@ class AbstractBenchmarkClient(abc.ABC):
             parameterized_query = self.construct_query(raw_query, parameters)
             LOGGER.info(f'Executing parameterized query:\n{parameterized_query}')
 
-            # To handle transient errors, a query may potentially re-execute.
-            is_error, client_time, process = False, 0, None
-            for r in range(self.retries):
-                execution_record_base = {
-                    'queryFile': query.query_file,
-                    'query': parameterized_query,
-                    'parameters': parameters
-                }
+            # Execute our query.
+            execution_record_base = {
+                'queryFile': query.query_file,
+                'parameterFile': query.parameter_file,
+                'query': parameterized_query,
+                'parameters': parameters
+            }
+            result_output = multiprocessing.Queue()
+            process = multiprocessing.Process(
+                target=self.execute_query,
+                args=(parameterized_query, result_output,)
+            )
+            t_before = timeit.default_timer()
+            process.start()
+            process.join(query.timeout)
+            client_time = timeit.default_timer() - t_before
 
-                # Execute our query.
-                result_output = multiprocessing.Queue()
-                process = multiprocessing.Process(
-                    target=self.execute_query,
-                    args=(parameterized_query, result_output,)
-                )
-                t_before = timeit.default_timer()
-                process.start()
-                process.join(query.timeout)
-                client_time = timeit.default_timer() - t_before
+            # Kill our query if we need to.
+            if process.is_alive():
+                LOGGER.info(f'Timeout of {query.timeout}s reached for query:\n{parameterized_query}')
+                self.log_execution({**execution_record_base, 'clientTime': client_time, 'status': 'timeout'})
+                process.kill()
+                process.join()
+                LOGGER.info(f'Issuing restart command and adding query {query.query_file} to the blacklist.')
+                self.restart_system(is_log=self.is_debug)
+                LOGGER.info(f'Adding query {query.query_file} to the blacklist.')
+                blacklist.add(query.get_id())
 
-                # Explain our query after executing it.
-                query_plan = self.explain_query(parameterized_query)
-                execution_record_base['queryPlan'] = query_plan
-
-                # Kill our query if we need to.
-                if process.is_alive():
-                    LOGGER.info(f'Timeout of {query.timeout}s reached for query:\n{parameterized_query}')
-                    self.log_execution({**execution_record_base, 'clientTime': client_time, 'status': 'timeout'})
-                    process.kill()
-                    process.join()
+            else:
+                result = result_output.get()
+                if result['status'] != 'fatal' and result['status'] != 'success':
+                    LOGGER.warning(f'Non fatal exception status returned: {result["status"]}. Skipping the query.')
                     LOGGER.info(f'Issuing restart command and adding query {query.query_file} to the blacklist.')
-                    self.call_subprocess(self.restart_command, is_log=self.is_debug)
-                    blacklisted_queries.add(query.query_file)
+                    self.restart_system(is_log=self.is_debug)
+                    blacklist.add(query.get_id())
+
+                elif result['status'] != 'success':
+                    LOGGER.error('Exiting due to non-success status given by query execution.')
+                    self.execution_statistics.is_ended_in_error = True
+                    break
 
                 else:
-                    result = result_output.get()
-                    if result['status'] != 'success' and r < (self.retries - 1):
-                        LOGGER.warning(f'Non success status returned: {result["status"]}. Restarting the query.')
-                        time.sleep(5)
-                        continue
+                    # Explain our query after executing it.
+                    query_plan = self.explain_query(parameterized_query)
+                    execution_record_base['queryPlan'] = query_plan
+                self.log_execution({**result, **execution_record_base, 'clientTime': client_time})
 
-                    elif result['status'] == 'transient':
-                        LOGGER.warning(f'Transient exception status returned: {result["status"]}. Skipping the query.')
-                        LOGGER.info(f'Issuing restart command and adding query {query.query_file} to the blacklist.')
-                        self.call_subprocess(self.restart_command, is_log=self.is_debug)
-                        blacklisted_queries.add(query.query_file)
-
-                    elif result['status'] != 'success':
-                        is_error = True
-                        break
-
-                    self.log_execution({**result, **execution_record_base, 'clientTime': client_time})
-
-                # Gather query statistics.
-                self.execution_statistics.end_time = datetime.datetime.now()
-                self.execution_statistics.total_running_time = timeit.default_timer() - t_execution_start
-                self.execution_statistics.total_executions += 1
-                self.execution_statistics.queries_executed += [{
-                    'queryFile': query.query_file,
-                    'clientTime': client_time
-                }]
-                break
-
-            if is_error:
-                LOGGER.error('Exiting due to non-success status given by query execution.')
-                self.execution_statistics.is_ended_in_error = True
-                break
+            # Gather query statistics.
+            self.execution_statistics.end_time = datetime.datetime.now()
+            self.execution_statistics.total_running_time = timeit.default_timer() - t_execution_start
+            self.execution_statistics.total_executions += 1
+            self.execution_statistics.queries_executed += [{
+                'queryFile': query.query_file,
+                'clientTime': client_time
+            }]
 
         # Flush our loggers.
         LOGGER.info('Flushing the logger.')

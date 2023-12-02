@@ -2,7 +2,7 @@
 
 The purpose of this instance to is act as a client to execute the SNB queries for both Neo4J and Graphix.
 This instance was generated using the following commands:
-01. sudo yum install git tmux htop
+01. sudo yum install git tmux htop python3-pip
 02. mkdir client queries
 
 # On development machine, rsync to the client folder above... (client + queries folder)
@@ -16,22 +16,41 @@ This instance was generated using the following commands:
 10. sudo make install
 11. cd ~ ; wget https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz
 12. tar -xzf Python-3.11.1.tgz
-13. cd Python-3.11.1.tgz
+13. cd Python-3.11.1
 14. ./configure --enable-optimizations --with-openssl=/usr
-15. sudo make altinstall
+15. # this next command will take a while... get some coffee :-)
+    sudo make altinstall
 16. cd client ; python3.11 -m venv venv
 17. source ~/client/venv/bin/activate
 18. pip install -r ~/client/requirements.txt
 
+#   Mount our EFS drive.
+19. mkdir ldbc_snb_efs
+20. sudo mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-xxxx.efs.us-west-1.amazonaws.com:/ ~/ldbc_snb_efs/
+21. sudo vi /etc/fstab  # We want to add the line:
+    fs-xxxx.efs.us-west-1.amazonaws.com:/ /home/ec2-user/ldbc_snb_efs nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport,_netdev 0 0
+22. sudo mount -a
+
 #   For our SF=300 experiments.
-17. source ~/client/venv/bin/activate
-19. python ~/client/benchmark/_graphix.py \
+23. source ~/client/venv/bin/activate
+24. python ~/client/benchmark/_graphix.py \
    --queryDir /home/ec2-user/queries/queries/graphix \
-   --parametersDir /mnt/efs/fs1/sf-300/parameters/ \
+   --parametersDir /home/ec2-user/ldbc_snb_efs/sf-1/parameters/ \
    --resultsDir /home/ec2-user/client/results \
    --logDir /home/ec2-user/client/logs \
-   --uri http://localhost:19002 \
-   --restartCmd '/home/ec2-user/client/restart-database.sh graphix-A' \
+   --uri http://ec2-xxx-xxx-xxx-xxx.us-west-1.compute.amazonaws.com:19002 \
+   --restartCmd '/home/ec2-user/client/restart-database.sh graphix-F' \
    --config /home/ec2-user/client/config/graphix.json \
-   --notes "Debug run. October 8. Just trying to see what runs." \
-   --debug
+   --notes "First run of November 15. 32-node cluster. Running all queries. SF-1." \
+   --notify
+25. python ~/client/benchmark/_neo4j.py \
+   --queryDir /home/ec2-user/queries/queries/neo4j \
+   --parametersDir /home/ec2-user/ldbc_snb_efs/sf-300/parameters/ \
+   --resultsDir /home/ec2-user/client/results \
+   --logDir /home/ec2-user/client/logs \
+   --uri bolt://xxx.xxx.xxx.xxx:7687 \
+   --restartCmd '/home/ec2-user/client/restart-database.sh neo4j' \
+   --config /home/ec2-user/client/config/neo4j.json \
+   --notes "Debug run. October 25. Just trying to see what runs." \
+   --notify
+

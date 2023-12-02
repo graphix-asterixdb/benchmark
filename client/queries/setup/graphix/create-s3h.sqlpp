@@ -18,7 +18,7 @@
  */
 
 //
-// This script is part of ETL: using our external datasets, we transform and populate the internal datasets.
+// This script is used to populate the "SNB.Native" datasets directly from the "static" entities.
 //
 
 USE SNB.Native;
@@ -48,4 +48,67 @@ INSERT INTO TagClasses (
     SELECT
         tc.*,
         isSubclassOf AS isSubclassOf
+);
+
+INSERT INTO Universities (
+    FROM
+        SNB.FromDatagen.Organisation o,
+        SNB.FromDatagen.OrganisationIsLocatedInPlace oilip
+    WHERE
+        o.`type` LIKE 'University' AND
+        oilip.OrganisationId = o.id
+    SELECT
+        o.id          AS id,
+        o.name        AS name,
+        o.url         AS url,
+        oilip.PlaceId AS placeId
+);
+INSERT INTO Companies (
+    FROM
+        SNB.FromDatagen.Organisation o,
+        SNB.FromDatagen.OrganisationIsLocatedInPlace oilip
+    WHERE
+        o.`type` LIKE 'Company' AND
+        oilip.OrganisationId = o.id
+    SELECT
+        o.id          AS id,
+        o.name        AS name,
+        o.url         AS url,
+        oilip.PlaceId AS placeId
+);
+INSERT INTO Cities (
+    FROM
+        SNB.FromDatagen.Place p,
+        SNB.FromDatagen.PlaceIsPartOfPlace pipop
+    WHERE
+        p.`type` = 'City' AND
+        pipop.Place1Id = p.id
+    SELECT
+        p.id           AS id,
+        p.name         AS name,
+        p.url          AS url,
+        pipop.Place2Id AS containerId
+);
+INSERT INTO Countries (
+    FROM
+        SNB.FromDatagen.Place p,
+        SNB.FromDatagen.PlaceIsPartOfPlace pipop
+    WHERE
+        p.`type` = 'Country' AND
+        pipop.Place1Id = p.id
+    SELECT
+        p.id           AS id,
+        p.name         AS name,
+        p.url          AS url,
+        pipop.Place2Id AS containerId
+);
+INSERT INTO Continents (
+    FROM
+        SNB.FromDatagen.Place p
+    WHERE
+        p.`type` = 'Continent'
+    SELECT
+        p.id   AS id,
+        p.name AS name,
+        p.url  AS url
 );

@@ -2,7 +2,7 @@
 
 The purpose of this instance is to generate a Graphix cluster.
 This instance was generated using the following commands:
-01. sudo yum install git tmux htop
+01. sudo yum install git tmux htop python3-pip java-11-amazon-corretto-headless
 02. # Copy the graphix package here from the development machine...
 03. cd graphix-A ; vi graphix-cc.conf ; cd ;
 04. pip3 install ansible
@@ -14,13 +14,14 @@ This instance was generated using the following commands:
 09. vi ~/.ssh/config
     # Insert the lines:
     # Host *.amazonaws.com
-    #    IdentityFile ~/ldbc-snb-kp.pem
+    #    IdentityFile /home/ec2-user/ldbc-snb-kp.pem
 10. chmod 600 ~/.ssh/config
 11. vi ~/.ansible.cfg
     # Add the following:
     # [defaults]
     # interpreter_python=/usr/bin/python3
 12. # Update the aws folder...
+13. # Update the setup folder...
 
 # Setup the 1NC cluster.
 ## Spawn AWS instances and deploy Graphix.
@@ -29,6 +30,9 @@ This instance was generated using the following commands:
 15. vi graphix-A/opt/aws/conf/aws_settings.yml
     # Modify 'count: 1'
 16. cd ~/graphix-A/opt/aws/ ; ./bin/deploy.sh
+    # If there are issues here, use the commands below.
+    a. ansible-galaxy collection install amazon.aws:==3.3.1 --force
+    b. ansible-galaxy collection install community.aws
 17. ./bin/start.sh
 
 # Setup for SF300.

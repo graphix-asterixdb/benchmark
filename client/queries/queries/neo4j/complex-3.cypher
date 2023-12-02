@@ -11,7 +11,7 @@ WHERE NOT person=friend AND NOT city IN cities
 WITH DISTINCT friend, countryX, countryY
 MATCH (friend)<-[:HAS_CREATOR]-(message),
       (message)-[:IS_LOCATED_IN]->(country)
-WHERE $endDate > message.creationDate >= $startDate AND
+WHERE ( $startDate + DURATION({days: $durationDays}) ) > message.creationDate >= $startDate AND
       country IN [countryX, countryY]
 WITH friend,
      CASE WHEN country=countryX THEN 1 ELSE 0 END AS messageX,

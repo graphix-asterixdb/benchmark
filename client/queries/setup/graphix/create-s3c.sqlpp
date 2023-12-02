@@ -18,48 +18,11 @@
  */
 
 //
-// This script is part of ETL: using our external datasets, we transform and populate the internal datasets.
+// This script is used to populate the "SNB.Native" datasets from transformed JSONL files of the "dynamic" entities.
 //
 
-USE SNB.Native;
-
-INSERT INTO Persons (
-    FROM
-        SNB.FromDatagen.Person p,
-        SNB.FromDatagen.PersonIsLocatedInCity pilic
-    LET
-        universities = (
-            FROM
-                SNB.FromDatagen.PersonStudyAtUniversity psau
-            WHERE
-                psau.PersonId = p.id
-            SELECT
-                psau.UniversityId AS organizationId,
-                psau.classYear    AS classYear
-        ),
-        companies = (
-            FROM
-                SNB.FromDatagen.PersonWorkAtCompany pwac
-            WHERE
-                pwac.PersonId = p.id
-            SELECT
-                pwac.CompanyId AS organizationId,
-                pwac.workFrom  AS workFrom
-        )
-    WHERE
-        p.id = pilic.PersonId
-    SELECT
-        p.id                     AS id,
-        p.firstName              AS firstName,
-        p.lastName               AS lastName,
-        p.gender                 AS gender,
-        DATE(p.birthday)         AS birthday,
-        DATETIME(p.creationDate) AS creationDate,
-        p.locationIP             AS locationIP,
-        p.browserUsed            AS browserUsed,
-        pilic.CityId             AS placeId,
-        SPLIT(p.email, ';')      AS email,
-        SPLIT(p.language, ';')   AS language,
-        universities             AS universities,
-        companies                AS companies
+LOAD  DATASET SNB.Native.Persons
+USING localfs (
+    ("path"="$DATA_PATH/Persons.adm"),
+    ("format"="adm")
 );

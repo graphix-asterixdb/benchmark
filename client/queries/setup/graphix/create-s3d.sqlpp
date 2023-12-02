@@ -18,24 +18,11 @@
  */
 
 //
-// This script is part of ETL: using our external datasets, we transform and populate the internal datasets.
+// This script is used to populate the "SNB.Native" datasets from transformed JSONL files of the "dynamic" entities.
 //
 
-USE SNB.Native;
-
-INSERT INTO Knows (
-    FROM
-        SNB.FromDatagen.PersonKnowsPerson pkp
-    SELECT
-        DATETIME(pkp.creationDate) AS creationDate,
-        pkp.Person1Id              AS startId,
-        pkp.Person2Id              AS endId
-);
-INSERT INTO Knows (
-    FROM
-        SNB.FromDatagen.PersonKnowsPerson pkp
-    SELECT
-        DATETIME(pkp.creationDate) AS creationDate,
-        pkp.Person2Id              AS startId,
-        pkp.Person1Id              AS endId
+LOAD  DATASET SNB.Native.Knows
+USING localfs (
+    ("path"="$DATA_PATH/Knows.adm"),
+    ("format"="adm")
 );

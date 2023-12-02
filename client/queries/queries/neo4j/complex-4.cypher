@@ -3,7 +3,7 @@ MATCH (person:Person {id: $personId })-[:KNOWS]-(friend:Person),
 WITH DISTINCT tag, post
 WITH tag,
      CASE
-       WHEN $startDate <= post.creationDate < $endDate THEN 1
+       WHEN $startDate <= post.creationDate < ( $startDate + DURATION({days: $durationDays}) ) THEN 1
        ELSE 0
      END AS valid,
      CASE

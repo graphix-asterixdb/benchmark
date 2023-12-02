@@ -20,12 +20,11 @@ SET `graphix.evaluation.prefer-indexnl` "false";
 
 FROM
     GRAPH SNB.Native.SNBGraph
-        (tag:Tag)<-[:HAS_INTEREST]-(person1:Person),
+        (tag:Tag WHERE tag.name = $tag)<-[:HAS_INTEREST]-(person1:Person),
         (person1)-[:KNOWS]->(mutualFriend:Person),
         (mutualFriend)-[:KNOWS]->(person2:Person),
         (person2)-[:HAS_INTEREST]->(tag)
 WHERE
-    tag.name = $tag AND
     NOT EXISTS (
         FROM
             GRAPH SNB.Native.SNBGraph

@@ -18,16 +18,12 @@
  */
 
 //
-// This script is part of ETL: using our external datasets, we transform and populate the internal datasets.
+// This script is used to populate the "SNB.Native" datasets from transformed JSONL files of the "dynamic" entities.
 //
 
-USE SNB.Native;
 
-INSERT INTO ForumPerson (
-    FROM
-        SNB.FromDatagen.ForumHasMemberPerson fhmp
-    SELECT
-        fhmp.ForumId                AS forumId,
-        fhmp.PersonId               AS personId,
-        DATETIME(fhmp.creationDate) AS joinDate
+LOAD  DATASET SNB.Native.ForumPerson
+USING localfs (
+    ("path"="$DATA_PATH/ForumPerson.adm"),
+    ("format"="adm")
 );
