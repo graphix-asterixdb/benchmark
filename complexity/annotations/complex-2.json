@@ -1,0 +1,1080 @@
+[
+  {
+    "language": "gSQL++",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "GRAPH",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "person",
+                      "Person",
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "person",
+                                  "id"
+                                ]
+                              },
+                              "$personId"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "KNOWS"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "message",
+                      "Message"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "<",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "creationDate"
+                    ]
+                  },
+                  "$maxDate"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "id"
+                ]
+              },
+              "messageId",
+              {
+                "operator": "COALESCE",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "content"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "imageFile"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "creationDate"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "messageCreationDate",
+              "DESC",
+              "messageId",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "$limit"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SPARQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "sn",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/data/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "snvoc",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "xsd",
+              "<http://www.w3.org/2001/XMLSchema#>"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              "distinct",
+              {
+                "operator": "?",
+                "operands": [
+                  "directFriend"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "first"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "last"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "post"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "content"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "date"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "sn",
+                          "pers%personId%"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "directKnows"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "directFriend"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "directFriend"
+                        ]
+                      },
+                      {
+                        "operator": "^",
+                        "operands": [
+                          {
+                            "operator": ":",
+                            "operands": [
+                              "snvoc",
+                              "directKnows"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "directFriend"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "directFriend"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "firstname"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "first"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "directFriend"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "lastName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "last"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "UNION",
+                    "operands": [
+                      {
+                        "operator": "{},",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "post"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "content"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "content"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "post"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "imageFile"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "content"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "post"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "creationDate"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "date"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "FILTER",
+                    "operands": [
+                      {
+                        "operator": "<",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "date"
+                            ]
+                          },
+                          {
+                            "operator": "^^",
+                            "operands": [
+                              "%maxDate%",
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "xsd",
+                                  "dateTime"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "DESC",
+              {
+                "operator": "?",
+                "operands": [
+                  "date"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "post"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "Cypher",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "Person",
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "id",
+                          "$personId"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "KNOWS"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend",
+                  "Person"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "HAS_CREATOR"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "message",
+                  "Message"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "<=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "creationDate"
+                    ]
+                  },
+                  "$maxDate"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "RETURN",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "id"
+                ]
+              },
+              "postOrCommentId",
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "id"
+                ]
+              },
+              {
+                "operator": "COALESCE",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "content"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "imageFile"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "creationDate"
+                ]
+              },
+              "postOrCommentCreationDate"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "postOrCommentCreationDate",
+              "DESC",
+              {
+                "operator": "toInteger",
+                "operands": [
+                  "postOrCommentId"
+                ]
+              },
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "SELECT",
+            "operands": [
+              "p_personid",
+              "p_firstname",
+              "p_lastname",
+              "m_messageid",
+              {
+                "operator": "COALESCE",
+                "operands": [
+                  "m_ps_imagefile",
+                  "m_content"
+                ]
+              },
+              "m_creationdate"
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              "person",
+              "message",
+              "knows"
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  "p_personid",
+                  "m_creatorid"
+                ]
+              },
+              {
+                "operator": "<=",
+                "operands": [
+                  "m_creationdate",
+                  ":maxDate"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  "k_person1id",
+                  ":personId"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  "k_person2id",
+                  "p_personId"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "m_creationdate",
+              "DESC",
+              "m_messageid",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "GSQL",
+    "query": [
+      {
+        "operator": "TYPEDEF",
+        "operands": [
+          {
+            "operator": "TUPLE",
+            "operands": [
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "personId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "personFirstName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "personLastName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "messageId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "messageContent"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "messageCreationDate"
+                ]
+              },
+              "msg"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "HeapAcum",
+          "msg",
+          "20",
+          "messageCreationDate",
+          "DESC",
+          "messageId",
+          "ASC",
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "result"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "S",
+          {
+            "operator": "{}",
+            "operands": [
+              "personId"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "T",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "t"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "S",
+                      "s"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "KNOWS"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Person",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "HAS_CREATOR"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      {
+                        "operator": "|",
+                        "operands": [
+                          "Comment",
+                          "Post"
+                        ]
+                      },
+                      "t"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "WHERE",
+                "operands": [
+                  {
+                    "operator": "<",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "t",
+                          "creationDate"
+                        ]
+                      },
+                      "maxDate"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "PER",
+                "operands": [
+                  "p",
+                  "t"
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "IF",
+                    "operands": [
+                      {
+                        "operator": "!=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "t",
+                              "content"
+                            ]
+                          },
+                          ""
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "THEN",
+                    "operands": [
+                      {
+                        "operator": "+=",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "result"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "msg",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "firstName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "lastName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "t",
+                                  "id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "t",
+                                  "content"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "t",
+                                  "creationDate"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "ELSE",
+                    "operands": [
+                      {
+                        "operator": "+=",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "result"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "msg",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "firstName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "lastName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "t",
+                                  "id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "t",
+                                  "imageFile"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "t",
+                                  "creationDate"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "PRINT",
+        "operands": [
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "result"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

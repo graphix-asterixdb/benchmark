@@ -1,0 +1,3733 @@
+[
+  {
+    "language": "gSQL++",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "GRAPH",
+                "operands": [
+                  "SNB.Native.SNBGraph",
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "person",
+                      "Person",
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "person",
+                              "id"
+                            ]
+                          },
+                          "$personId"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "p",
+                      "KNOWS",
+                      "1",
+                      "3"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "otherPerson",
+                      "Person"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "locationCity",
+                      "City"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "LET",
+            "operands": [
+              "companies",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "otherPerson",
+                          "companies"
+                        ]
+                      },
+                      "opc",
+                      {
+                        "operator": "GRAPH",
+                        "operands": [
+                          "SNB.Native.SNBGraph",
+                          {
+                            "operator": "VERTEX",
+                            "operands": [
+                              "company",
+                              "Company"
+                            ]
+                          },
+                          {
+                            "operator": "EDGE",
+                            "operands": [
+                              "IS_LOCATED_IN"
+                            ]
+                          },
+                          {
+                            "operator": "VERTEX",
+                            "operands": [
+                              "companyCountry",
+                              "Country"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "opc",
+                              "organizationId"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "company",
+                              "id"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "company",
+                          "name"
+                        ]
+                      },
+                      "companyName",
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "company",
+                          "workFrom"
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "companyCountry",
+                          "name"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "universities",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "otherPerson",
+                          "universities"
+                        ]
+                      },
+                      "opu",
+                      {
+                        "operator": "GRAPH",
+                        "operands": [
+                          "SNB.Native.SNBGraph",
+                          {
+                            "operator": "VERTEX",
+                            "operands": [
+                              "university",
+                              "University"
+                            ]
+                          },
+                          {
+                            "operator": "EDGE",
+                            "operands": [
+                              "IS_LOCATED_IN"
+                            ]
+                          },
+                          {
+                            "operator": "VERTEX",
+                            "operands": [
+                              "universityCity",
+                              "City"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "opu",
+                              "organizationId"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "university",
+                              "id"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "university",
+                          "name"
+                        ]
+                      },
+                      "universityName",
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "university",
+                          "classYear"
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "universityCity",
+                          "name"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "otherPerson",
+                      "$firstName"
+                    ]
+                  },
+                  "otherPerson",
+                  "firstName",
+                  "$firstName"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "GROUP BY",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "id"
+                ]
+              },
+              "otherPerson",
+              "locationCity",
+              "companies",
+              "universities"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "latName"
+                ]
+              },
+              {
+                "operator": "MIN",
+                "operands": [
+                  {
+                    "operator": "LEN",
+                    "operands": [
+                      {
+                        "operator": "EDGES",
+                        "operands": [
+                          "p"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "distanceFromPerson",
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "birthday"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "creationDate"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "gender"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "browserUsed"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "locationIp"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "email"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "speaks"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "locationCity",
+                  "name"
+                ]
+              },
+              "universities",
+              "companies"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "distanceFromPerson",
+              "ASC",
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "lastName"
+                ]
+              },
+              "ASC",
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "id"
+                ]
+              },
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "$limit"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SPARQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "path",
+              "<http://www.ontotext.com/path#>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "sn",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/data/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "rdf",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "snvoc",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "xsd",
+              "<http://www.w3.org/2001/XMLSchema#>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "dbr",
+              "<http://dbpedia.org/resource/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "foaf",
+              "<http://xmlns.com/foaf/0.1/>"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": "?",
+                "operands": [
+                  "dst"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "lname"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "dist"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "bday"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "since"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "gen"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "browser"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "locationIP"
+                ]
+              },
+              {
+                "operator": "group_concat",
+                "operands": [
+                  "distinct",
+                  {
+                    "operator": "?",
+                    "operands": [
+                      "email"
+                    ]
+                  },
+                  ", "
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "emails"
+                ]
+              },
+              {
+                "operator": "group_concat",
+                "operands": [
+                  "distinct",
+                  {
+                    "operator": "?",
+                    "operands": [
+                      "lng"
+                    ]
+                  },
+                  ", "
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "lngs"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "based"
+                ]
+              },
+              {
+                "operator": "group_concat",
+                "operands": [
+                  "distinct",
+                  {
+                    "operator": "concat",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "study_name"
+                        ]
+                      },
+                      " ",
+                      {
+                        "operator": "STR",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "study_year"
+                            ]
+                          }
+                        ]
+                      },
+                      " ",
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "study_country"
+                        ]
+                      }
+                    ]
+                  },
+                  ", "
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "studyAt"
+                ]
+              },
+              {
+                "operator": "group_concat",
+                "operands": [
+                  "distinct",
+                  {
+                    "operator": "concat",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "work_name"
+                        ]
+                      },
+                      " ",
+                      {
+                        "operator": "STR",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "work_year"
+                            ]
+                          }
+                        ]
+                      },
+                      " ",
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "work_country"
+                        ]
+                      }
+                    ]
+                  },
+                  ", "
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "workAt"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "dst"
+                            ]
+                          },
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "lname"
+                            ]
+                          },
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "dist"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "{}",
+                            "operands": [
+                              {
+                                "operator": "VALUES",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "src"
+                                    ]
+                                  },
+                                  {
+                                    "operator": "{}",
+                                    "operands": [
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "sn",
+                                          "pers%personId%"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "TRIPLE",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "dst"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "snvoc",
+                                      "firstName"
+                                    ]
+                                  },
+                                  "\"%firstName%\""
+                                ]
+                              },
+                              {
+                                "operator": "FILTER",
+                                "operands": [
+                                  {
+                                    "operator": "!=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "dst"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "sn",
+                                          "pers%personId%"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "SERVICE",
+                                "operands": [
+                                  "<http://www.ontotext.com/path#search>",
+                                  {
+                                    "operator": "{}",
+                                    "operands": [
+                                      {
+                                        "operator": "TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": "<>",
+                                            "operands": [
+                                              "urn",
+                                              "path"
+                                            ]
+                                          },
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "findPath"
+                                            ]
+                                          },
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "distance"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SHORT_TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "sourceNode"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "src"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SHORT_TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "destinationNode"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "dst"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SHORT_TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "distanceBinding"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "dist"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SHORT_TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "maxPathLength"
+                                            ]
+                                          },
+                                          "3"
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SHORT_TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "startNode"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "start"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SHORT_TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "path",
+                                              "endNode"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "fr"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "SERVICE",
+                                        "operands": [
+                                          {
+                                            "operator": "<>",
+                                            "operands": [
+                                              "urn",
+                                              "path"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "{}",
+                                            "operands": [
+                                              {
+                                                "operator": "TRIPLE",
+                                                "operands": [
+                                                  {
+                                                    "operator": "?",
+                                                    "operands": [
+                                                      "start"
+                                                    ]
+                                                  },
+                                                  {
+                                                    "operator": ":",
+                                                    "operands": [
+                                                      "snvoc",
+                                                      "directKnows"
+                                                    ]
+                                                  },
+                                                  {
+                                                    "operator": "?",
+                                                    "operands": [
+                                                      "fr"
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "TRIPLE",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "dst"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "snvoc",
+                                      "lastName"
+                                    ]
+                                  },
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "lname"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "ORDER BY",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "dist"
+                            ]
+                          },
+                          "lname",
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "dst"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "LIMIT",
+                        "operands": [
+                          "20"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "birthday"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "bday"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "isLocatedIn"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "basedURI"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "basedURI"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "foaf",
+                          "name"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "based"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "creationDate"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "since"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "gender"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "gen"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "locationIP"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "locationIP"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "browserUsed"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "browser"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "email"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "email"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "dst"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "speaks"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "lng"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "OPTIONAL",
+                    "operands": [
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "dst"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "studyAt"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "classYear"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_year"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "hasOrganisation"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_org"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_org"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "isLocatedIn"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_countryURI"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_countryURI"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "foaf",
+                                  "name"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_country"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_org"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "foaf",
+                                  "name"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "study_name"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "OPTIONAL",
+                    "operands": [
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "dst"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "workAt"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "workFrom"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_year"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "hasOrganisation"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_org"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_org"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "isLocatedIn"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_countryURI"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_countryURI"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "foaf",
+                                  "name"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_country"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_org"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "foaf",
+                                  "name"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "work_name"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "GROUP BY",
+            "operands": [
+              {
+                "operator": "?",
+                "operands": [
+                  "dst"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "lname"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "bday"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "since"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "gen"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "browser"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "locationIP"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "based"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "dist"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "Cypher",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "p",
+                  "Person",
+                  {
+                    "operator": "{}}",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "id",
+                          "$personId"
+                        ]
+                      }
+                    ]
+                  },
+                  "friend",
+                  "Person",
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "firstName",
+                          "$firstName"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "NOT",
+                "operands": [
+                  {
+                    "operator": "=",
+                    "operands": [
+                      "p",
+                      "friend"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "p",
+              "friend"
+            ]
+          },
+          {
+            "operator": "MATCH",
+            "operands": [
+              "path",
+              {
+                "operator": "PATH",
+                "operands": [
+                  {
+                    "operator": "shortestPath",
+                    "operands": [
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "p"
+                        ]
+                      },
+                      {
+                        "operator": "EDGE",
+                        "operands": [
+                          "KNOWS",
+                          "*",
+                          "1",
+                          "3"
+                        ]
+                      },
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "friend"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              {
+                "operator": "MIN",
+                "operands": [
+                  {
+                    "operator": "LENGTH",
+                    "operands": [
+                      "path"
+                    ]
+                  }
+                ]
+              },
+              "distance",
+              "friend"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "distance",
+              "ASC",
+              {
+                "operator": ":",
+                "operands": [
+                  "friend",
+                  "lastName"
+                ]
+              },
+              "ASC",
+              {
+                "operator": "toInteger",
+                "operands": [
+                  {
+                    "operator": ":",
+                    "operands": [
+                      "friend",
+                      "id"
+                    ]
+                  }
+                ]
+              },
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          },
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_LOCATED_IN"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friendCity",
+                  "City"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "OPTIONAL MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "studyAt",
+                  "STUDY_AT"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "uni",
+                  "University"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_LOCATED_IN"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "uniCity",
+                  "Citty"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "friend",
+              {
+                "operator": "COLLECT",
+                "operands": [
+                  {
+                    "operator": "CASE",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "uni",
+                          "name"
+                        ]
+                      },
+                      {
+                        "operator": "WHEN",
+                        "operands": [
+                          "null"
+                        ]
+                      },
+                      {
+                        "operator": "THEN",
+                        "operands": [
+                          "null"
+                        ]
+                      },
+                      {
+                        "operator": "[]",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "uni",
+                              "name"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "studyAt",
+                              "classYear"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "uniCity",
+                              "name"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "unis",
+              "friendCity",
+              "distance"
+            ]
+          },
+          {
+            "operator": "OPTIONAL MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "workAt",
+                  "WORK_AT"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "company",
+                  "Company"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_LOCATED_IN"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "companyCountry",
+                  "Country"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "friend",
+              {
+                "operator": "COLLECT",
+                "operands": [
+                  {
+                    "operator": "CASE",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "company",
+                          "name"
+                        ]
+                      },
+                      {
+                        "operator": "WHEN",
+                        "operands": [
+                          "null"
+                        ]
+                      },
+                      {
+                        "operator": "THEN",
+                        "operands": [
+                          "null"
+                        ]
+                      },
+                      {
+                        "operator": "[]]",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "company",
+                              "name"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "workAt",
+                              "workFrom"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "companyCountry",
+                              "name"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "companies",
+              "unis",
+              "friendCity",
+              "distance"
+            ]
+          },
+          {
+            "operator": "RETURN",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              "friendId",
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "latName"
+                ]
+              },
+              "distance",
+              "distanceFromPerson",
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "birthday"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "creationDate"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "gender"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "browserUsed"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "locationIp"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "email"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "speaks"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friendCity",
+                  "name"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              "unis",
+              "companies"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "distanceFromPerson",
+              "ASC",
+              "friendLastName",
+              "ASC",
+              {
+                "operator": "toInteger",
+                "operands": [
+                  "friendId"
+                ]
+              },
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "SELECT",
+            "operands": [
+              "id",
+              "p_lastname",
+              {
+                "operator": "MIN",
+                "operands": [
+                  "dist"
+                ]
+              },
+              "p_birthday",
+              "p_creationdate",
+              "p_gender",
+              "p_browserused",
+              "p_locationip",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": "ARRAY_AGG",
+                        "operands": [
+                          "pe_email"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "person_email"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "pe_personid",
+                          "id"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "GROUP BY",
+                    "operands": [
+                      "pe_personid"
+                    ]
+                  }
+                ]
+              },
+              "emails",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": "ARRAY_AGG",
+                        "operands": [
+                          "plang_language"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "person_language"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "plang_personid",
+                          "id"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "GROUP BY",
+                    "operands": [
+                      "plang_personid"
+                    ]
+                  }
+                ]
+              },
+              "languages",
+              "p1",
+              "p1_name",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": "ARRAY_AGG",
+                        "operands": [
+                          {
+                            "operator": "ARRAY",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "o2",
+                                  "o_name"
+                                ]
+                              },
+                              {
+                                "operator": "::",
+                                "operands": [
+                                  "pu_classyear",
+                                  "text"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p2",
+                                  "pl_name"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "person_university",
+                      "organisation",
+                      "o2",
+                      "place",
+                      "p2"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "pu_personid",
+                          "id"
+                        ]
+                      },
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "pu_organisationid",
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "o2",
+                              "o_organisationid"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "o2",
+                              "o_placeid"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "p2",
+                              "pl_placeid"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "GROUP BY",
+                    "operands": [
+                      "pu_personid"
+                    ]
+                  }
+                ]
+              },
+              "university",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": "ARRAY_AGG",
+                        "operands": [
+                          {
+                            "operator": "ARRAY",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "o2",
+                                  "o_name"
+                                ]
+                              },
+                              {
+                                "operator": "::",
+                                "operands": [
+                                  "pc_workfrom",
+                                  "text"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p2",
+                                  "p1_name"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "person_company",
+                      "organisation",
+                      "o3",
+                      "place",
+                      "p3"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "pu_personid",
+                          "id"
+                        ]
+                      },
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "pu_organisationid",
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "o3",
+                              "o_organisationid"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "o3",
+                              "o_placeid"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "p3",
+                              "pl_placeid"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "GROUP BY",
+                    "operands": [
+                      "pc_personid"
+                    ]
+                  }
+                ]
+              },
+              "company"
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "UNION ALL",
+                "operands": [
+                  {
+                    "operator": "QUERY",
+                    "operands": [
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          "k_person2id",
+                          "id",
+                          "1",
+                          "dist"
+                        ]
+                      },
+                      {
+                        "operator": "FROM",
+                        "operands": [
+                          "knows",
+                          "person"
+                        ]
+                      },
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "k_person1id",
+                              ":personId"
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "p_personid",
+                              "k_person2id"
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "p_firstname",
+                              ":firstName"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "QUERY",
+                    "operands": [
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "b",
+                              "k_person2id"
+                            ]
+                          },
+                          "id",
+                          "2",
+                          "dist"
+                        ]
+                      },
+                      {
+                        "operator": "FROM",
+                        "operands": [
+                          "knows",
+                          "a",
+                          "knows",
+                          "b",
+                          "person"
+                        ]
+                      },
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "a",
+                                  "k_person1id"
+                                ]
+                              },
+                              ":personId"
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "b",
+                                  "k_person1id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "a",
+                                  "k_person2id"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "p_personid",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "b",
+                                  "k_person2id"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "p_firstname",
+                              ":firstName"
+                            ]
+                          },
+                          {
+                            "operator": "!=",
+                            "operands": [
+                              "p_personid",
+                              ":personId"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "QUERY",
+                    "operands": [
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "c",
+                              "k_person2id"
+                            ]
+                          },
+                          "id",
+                          "3",
+                          "dist"
+                        ]
+                      },
+                      {
+                        "operator": "FROM",
+                        "operands": [
+                          "knows",
+                          "a",
+                          "knows",
+                          "b",
+                          "knows",
+                          "c",
+                          "person"
+                        ]
+                      },
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "a",
+                                  "k_person1id"
+                                ]
+                              },
+                              ":personId"
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "b",
+                                  "k_person1id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "a",
+                                  "k_person2id"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "b",
+                                  "k_person2id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "c",
+                                  "k_person1id"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "p_personid",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "c",
+                                  "k_person2id"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "p_firstname",
+                              ":firstName"
+                            ]
+                          },
+                          {
+                            "operator": "!=",
+                            "operands": [
+                              "p_personid",
+                              ":personId"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "tmp",
+              "person",
+              "place",
+              "p1"
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  "p_personid",
+                  "id"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  "p_placeid",
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p1",
+                      "pl_placid"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "GROUP BY",
+            "operands": [
+              "id",
+              "p_lastname",
+              "p_birthday",
+              "p_creationdate",
+              "p_gender",
+              "p_browserused",
+              "p_locationip",
+              {
+                "operator": ".",
+                "operands": [
+                  "p1",
+                  "pl_name"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "dist",
+              "p_lastname",
+              "id"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "GSQL",
+    "query": [
+      {
+        "operator": "TYPEDEF",
+        "operands": [
+          {
+            "operator": "TUPLE",
+            "operands": [
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  {
+                    "operator": "VERTEXTYPE",
+                    "operands": [
+                      "Person"
+                    ]
+                  },
+                  "v"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "distance"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "id"
+                ]
+              }
+            ]
+          },
+          "friendInfo"
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "HeapAccum",
+          "friendInfo",
+          "20",
+          {
+            "operator": "TUPLEARG",
+            "operands": [
+              "distance",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "TUPLEARG",
+            "operands": [
+              "lastName",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "TUPLEARG",
+            "operands": [
+              "id",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "friendInfoTop"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "SumAccum",
+          "UINT",
+          {
+            "operator": "@",
+            "operands": [
+              "distance"
+            ]
+          },
+          "0"
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "SetAccum",
+          "VERTEX",
+          "Person",
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "friends"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "SumAccum",
+          "string",
+          {
+            "operator": "@",
+            "operands": [
+              "friendCityName"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "MapAccum",
+          "INT",
+          "INT",
+          {
+            "operator": "@",
+            "operands": [
+              "personInfo"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "INT",
+          "i",
+          "0"
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "S",
+          {
+            "operator": "{}",
+            "operands": [
+              "personId"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "WHILE",
+        "operands": [
+          {
+            "operator": "<",
+            "operands": [
+              "i",
+              "3"
+            ]
+          },
+          {
+            "operator": "ASSIGN",
+            "operands": [
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "S",
+                          "s"
+                        ]
+                      },
+                      {
+                        "operator": "EDGE",
+                        "operands": [
+                          "KNOWS"
+                        ]
+                      },
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "Person",
+                          "t"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "==",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "t",
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "distance"
+                                ]
+                              }
+                            ]
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "operator": "!=",
+                        "operands": [
+                          "t",
+                          "personId"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "ACCUM",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "t",
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "distance"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "+",
+                            "operands": [
+                              "i",
+                              "1"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "POST-ACCUM",
+                    "operands": [
+                      {
+                        "operator": "CASE",
+                        "operands": [
+                          {
+                            "operator": "WHEN",
+                            "operands": [
+                              {
+                                "operator": "==",
+                                "operands": [
+                                  {
+                                    "operator": ".",
+                                    "operands": [
+                                      "t",
+                                      "firstName"
+                                    ]
+                                  },
+                                  "firstName"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "THEN",
+                            "operands": [
+                              {
+                                "operator": "+=",
+                                "operands": [
+                                  {
+                                    "operator": "@",
+                                    "operands": [
+                                      {
+                                        "operator": "@",
+                                        "operands": [
+                                          "friendInfoTop"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "operator": "friendInfo",
+                                    "operands": [
+                                      "t",
+                                      {
+                                        "operator": ".",
+                                        "operands": [
+                                          "t",
+                                          {
+                                            "operator": "@",
+                                            "operands": [
+                                              "distance"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": ".",
+                                        "operands": [
+                                          "t",
+                                          "lastName"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ".",
+                                        "operands": [
+                                          "t",
+                                          "id"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "IF",
+            "operands": [
+              {
+                "operator": ">=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      {
+                        "operator": "size",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "friendInfoTop"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "20"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "BREAK",
+            "operands": []
+          },
+          {
+            "operator": "ASSIGN",
+            "operands": [
+              "i",
+              {
+                "operator": "+",
+                "operands": [
+                  "i",
+                  "1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "FOREACH",
+        "operands": [
+          "f",
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "friendInfoTop"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ASSIGN",
+            "operands": [
+              {
+                "operator": "+=",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      {
+                        "operator": "@",
+                        "operands": [
+                          "friends"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "f",
+                      "v"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "P",
+          {
+            "operator": "{}",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "friends"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "tmp",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "ct"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "City",
+                      "ct"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p",
+                      {
+                        "operator": "@",
+                        "operands": [
+                          "friendCityName"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "ct",
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "ListAccum",
+          "ListAccum",
+          "STRING",
+          {
+            "operator": "@",
+            "operands": [
+              "companies"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "tmp",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "ct"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "WORK_AT",
+                      "ew"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Company",
+                      "co"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Country",
+                      "cn"
+                    ]
+                  }
+                ]
+              },
+              "PER MATCH",
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "companies"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "[]",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "co",
+                              "name"
+                            ]
+                          },
+                          {
+                            "operator": "TO_STRING",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "ew",
+                                  "workFrom"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "cn",
+                              "name"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "ListAccum",
+          "ListAccum",
+          "STRING",
+          {
+            "operator": "@",
+            "operands": [
+              "universities"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "tmp",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "ct"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "STUDY_AT",
+                      "es"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Universities",
+                      "u"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "City",
+                      "ct"
+                    ]
+                  }
+                ]
+              },
+              "PER MATCH",
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "universities"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "[]",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "u",
+                              "name"
+                            ]
+                          },
+                          {
+                            "operator": "TO_STRING",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "es",
+                                  "classYear"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "ct",
+                              "name"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "P",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "p"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "p"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ORDER BY",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p",
+                      {
+                        "operator": "@",
+                        "operands": [
+                          "distance"
+                        ]
+                      }
+                    ]
+                  },
+                  "ASC",
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p",
+                      "lastName"
+                    ]
+                  },
+                  "ASC",
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p",
+                      "id"
+                    ]
+                  },
+                  "ASC"
+                ]
+              },
+              {
+                "operator": "LIMIT",
+                "operands": [
+                  "20"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "PRINT",
+        "operands": [
+          {
+            "operator": "[]",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "distance"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "birthday"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "creationDate"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "gender"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "browserUsed"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "locationIp"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "email"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "speaks"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "friendCityName"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "companies"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "universities"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "universities"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+

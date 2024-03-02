@@ -1,0 +1,707 @@
+[
+  {
+    "language": "gSQL++",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "GRAPH",
+                "operands": [
+                  "SNB.Native.SNBGraph",
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "person",
+                      "Person",
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "person",
+                                  "id"
+                                ]
+                              },
+                              "$personId"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "knows",
+                      "KNOWS"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "friend",
+                      "Person"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "knows",
+                  "creationDate"
+                ]
+              },
+              "friendshipCreationDate"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "friendshipCreationDate",
+              "DESC",
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              "ASC"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SPARQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "sn",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/data/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "rdf",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "snvoc",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "xsd",
+              "<http://www.w3.org/2001/XMLSchema#>"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": "?",
+                "operands": [
+                  "knownFriend"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "friendFirstName"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "friendLastName"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "creationDate"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "UNION",
+                    "operands": [
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "sn",
+                                  "pers%personId%"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "knows"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "knownFriendNode"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "knownFriendNode"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "hasPerson"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "knownFriend"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "knownFriend"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "knows"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "knownFriendNode"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "knownFriendNode"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "hasPerson"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "sn",
+                                  "pers%personId%"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "knownFriendNode"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "creationDate"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "creationDate"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "knownFriend"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "firstName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "friendFirstName"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "lastName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "friendLastName"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "DESC",
+              {
+                "operator": "?",
+                "operands": [
+                  "creationDate"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "knownFriend"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "Cypher",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "n",
+                  "Person",
+                  {
+                    "operator": "{}}",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "id",
+                          "$personId"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "r",
+                  "KNOWS"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "RETURN",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              "personId",
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "r",
+                  "creationDate"
+                ]
+              },
+              "friendshipCreationDate"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "friendshipCreationDate",
+              "DESC",
+              {
+                "operator": "toInteger",
+                "operands": [
+                  "personId"
+                ]
+              },
+              "ASC"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "SELECT",
+            "operands": [
+              "p_personid",
+              "p_firstname",
+              "p_lastname",
+              "k_creationdate"
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              "knows",
+              "person"
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  "k_person1id",
+                  ":personId"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  "k_person2id",
+                  "p_personid"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "k_creationdate",
+              "DESC",
+              "p_personid",
+              "ASC"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "GSQL",
+    "query": [
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "SumAccum",
+          "INT",
+          {
+            "operator": "@",
+            "operands": [
+              "creationDate"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "S",
+          {
+            "operator": "{}",
+            "operands": [
+              "personId"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "t"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "S",
+                      "s"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "KNOWS",
+                      "e"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Person",
+                      "t"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "t",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "creationDate"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "e",
+                          "creationDate"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ORDER BY",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "t",
+                      {
+                        "operator": "@",
+                        "operands": [
+                          "creationDate"
+                        ]
+                      }
+                    ]
+                  },
+                  "DESC",
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "t",
+                      "id"
+                    ]
+                  },
+                  "ASC"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "PRINT",
+        "operands": [
+          {
+            "operator": "[]",
+            "operands": [
+              "P",
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "P",
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "creationDate"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "result"
+        ]
+      }
+    ]
+  }
+]

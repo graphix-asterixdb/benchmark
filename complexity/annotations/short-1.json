@@ -1,0 +1,853 @@
+[
+  {
+    "language": "gSQL++",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "GRAPH",
+                "operands": [
+                  "SNB.Native.SNBGraph",
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "person",
+                      "Person",
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "person",
+                                  "id"
+                                ]
+                              },
+                              "$personId"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "city",
+                      "City"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "birthday"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "locationIP"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "browserUsed"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "city",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "gender"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "creationDate"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SPARQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "sn",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/data/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "rdf",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "snvoc",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "xsd",
+              "<http://www.w3.org/2001/XMLSchema#>"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": "?",
+                "operands": [
+                  "firstName"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "lastName"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "birthday"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "locationIP"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "usedBrowser"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "cityId"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "gender"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "creationDate"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "sn",
+                          "pers%personId%"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "rdf",
+                          "type"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "Person"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "firstName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "firstName"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "lastName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "lastName"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "gender"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "gender"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "birthday"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "birthday"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "locationIp"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "locationIp"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "browserUsed"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "usedBrowser"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SHORT_TRIPLE",
+                    "operands": [
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "isLocatedIn"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cityIdIri"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cityIdIri"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "id"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cityId"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "Cypher",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "n",
+                  "Person",
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "id",
+                          "personId"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_LOCATED_IN"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "p",
+                  "City"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "RETURN",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "birthday"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "locationIP"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "browserUsed"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "p",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "gender"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "n",
+                  "creationDate"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "SELECT",
+            "operands": [
+              "p_firstname",
+              "p_lastname",
+              "p_birthday",
+              "p_locationip",
+              "p_browserused",
+              "p_placeid",
+              "p_gender",
+              "p_creationdate"
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              "person"
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  "p_personid",
+                  ":personId"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "GSQL",
+    "query": [
+      {
+        "operator": "TYPEDEF",
+        "operands": [
+          {
+            "operator": "TUPLE",
+            "operands": [
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "lastName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "birthday"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "locationIP"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "browserUsed"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "cityId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "gender"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "creationDate"
+                ]
+              },
+              "ProfileInfo"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "ListAccum",
+          "ProfileInfo",
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "result"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "SumAccum",
+          "INT",
+          {
+            "operator": "@",
+            "operands": [
+              "cityId"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "P",
+          {
+            "operator": "{}",
+            "operands": [
+              "personId"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "s"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "s"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "City",
+                      "t"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "s",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "cityId"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "t",
+                          "id"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "POST-ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": "+=",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "result"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "ProfileInfo",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "firstName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "lastName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "birthday"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "locationIP"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "browserUsed"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  {
+                                    "operator": "@",
+                                    "operands": [
+                                      "cityId"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "gender"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "creationDate"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "PRINT",
+        "operands": [
+          {
+            "operator": ".",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "result"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "GET",
+                "operands": [
+                  "0",
+                  "result"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

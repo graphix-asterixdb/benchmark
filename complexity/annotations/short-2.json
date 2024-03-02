@@ -1,0 +1,1539 @@
+[
+  {
+    "language": "gSQL++",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "LET",
+            "operands": [
+              "topMessages",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": "GRAPH",
+                        "operands": [
+                          "SNB.Native.SNBGraph",
+                          {
+                            "operator": "VERTEX",
+                            "operands": [
+                              "person",
+                              "Person",
+                              {
+                                "operator": "WHERE",
+                                "operands": [
+                                  {
+                                    "operator": "=",
+                                    "operands": [
+                                      {
+                                        "operator": ".",
+                                        "operands": [
+                                          "person",
+                                          "id"
+                                        ]
+                                      },
+                                      "$personId"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "EDGE",
+                            "operands": [
+                              "HAS_CREATOR"
+                            ]
+                          },
+                          {
+                            "operator": "VERTEX",
+                            "operands": [
+                              "message",
+                              "Message"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "VALUE",
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "message",
+                          "id"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "ORDER BY",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "message",
+                          "creationDate"
+                        ]
+                      },
+                      "DESC"
+                    ]
+                  },
+                  {
+                    "operator": "LIMIT",
+                    "operands": [
+                      "10"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              "topMessages",
+              "tm",
+              {
+                "operator": "GRAPH",
+                "operands": [
+                  "SNB.Native.SNBGraph",
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "message",
+                      "Message"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "REPLY_OF",
+                      "*"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "post",
+                      "Message"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "HAS_CREATOR"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "orignalPoster",
+                      "Person"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  "tm",
+                  {
+                    "operator": "=",
+                    "operands": [
+                      "message",
+                      "id"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "post",
+                  "isPost"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "id"
+                ]
+              },
+              "messageId",
+              {
+                "operator": "COALESCE",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "content"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "imageFile"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "creationDate"
+                ]
+              },
+              "messageCreationDate",
+              {
+                "operator": ".",
+                "operands": [
+                  "post",
+                  "id"
+                ]
+              },
+              "originalPostId",
+              {
+                "operator": ".",
+                "operands": [
+                  "originalPoster",
+                  "id"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "originalPoster",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "originalPoster",
+                  "lastName"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "messageCreationDate",
+              "DESC",
+              "messageId",
+              "DESC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "$limit"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SPARQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "sn",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/data/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "rdf",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "snvoc",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "onto",
+              "<http://www.ontotext.com/>"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": "?",
+                "operands": [
+                  "message"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "content"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "creationDate"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "personMessage"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "originalPoster"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "originalPosterFirstName"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "originalPosterLastName"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "message"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "creationDate"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "WHERE",
+                            "operands": [
+                              {
+                                "operator": "TRIPLE",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "message"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "snvoc",
+                                      "hasCreator"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "sn",
+                                      "pers%personId%"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "SHORT_TRIPLE",
+                                "operands": [
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "snvoc",
+                                      "creationDate"
+                                    ]
+                                  },
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "creationDate"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "ORDER BY",
+                            "operands": [
+                              "DESC",
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "creationDate"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "LIMIT",
+                            "operands": [
+                              "10"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "message"
+                        ]
+                      },
+                      {
+                        "operator": "*",
+                        "operands": [
+                          {
+                            "operator": ":",
+                            "operands": [
+                              "snvoc",
+                              "replyOf"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "personMessage"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "personMessage"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "rdf",
+                          "type"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "Post"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "UNION",
+                    "operands": [
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "message"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "content"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "content"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "message"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "imageFile"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "content"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "personMessage"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "hasCreator"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "originalPoster"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "originalPoster"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "firstName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "originalPosterFirstName"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "TRIPLE",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "originalPoster"
+                        ]
+                      },
+                      {
+                        "operator": ":",
+                        "operands": [
+                          "snvoc",
+                          "lastName"
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "originalPosterLastName"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "DESC",
+              {
+                "operator": "?",
+                "operands": [
+                  "creationDate"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "personMessage"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "Cypher",
+    "query": [
+      {
+        "operator": "MATCH",
+        "operands": [
+          {
+            "operator": "EDGE",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "Person",
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "id",
+                          "$personId"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "HAS_CREATOR",
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "message"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "WITH",
+        "operands": [
+          "message",
+          {
+            "operator": ".",
+            "operands": [
+              "message",
+              "id"
+            ]
+          },
+          "messageId",
+          {
+            "operator": ".",
+            "operands": [
+              "message",
+              "creationDate"
+            ]
+          },
+          "messageCreationDate"
+        ]
+      },
+      {
+        "operator": "ORDER BY",
+        "operands": [
+          "messageCreationDate",
+          "DESC",
+          "messageId",
+          "ASC"
+        ]
+      },
+      {
+        "operator": "LIMIT",
+        "operands": [
+          "10"
+        ]
+      },
+      {
+        "operator": "MATCH",
+        "operands": [
+          {
+            "operator": "VERTEX",
+            "operands": [
+              "message"
+            ]
+          },
+          {
+            "operator": "EDGE",
+            "operands": [
+              "REPLY_OF",
+              "*",
+              "0"
+            ]
+          },
+          {
+            "operator": "VERTEX",
+            "operands": [
+              "post",
+              "Post"
+            ]
+          },
+          {
+            "operator": "VERTEX",
+            "operands": [
+              "post"
+            ]
+          },
+          {
+            "operator": "EDGE",
+            "operands": [
+              "HAS_CREATOR"
+            ]
+          },
+          {
+            "operator": "VERTEX",
+            "operands": [
+              "person"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "RETURN",
+        "operands": [
+          "messageId",
+          {
+            "operator": "COALESCE",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "imageFile"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "message",
+                  "content"
+                ]
+              }
+            ]
+          },
+          "messageCreationDate",
+          {
+            "operator": ".",
+            "operands": [
+              "post",
+              "id"
+            ]
+          },
+          {
+            "operator": ".",
+            "operands": [
+              "person",
+              "id"
+            ]
+          },
+          "personId",
+          {
+            "operator": ".",
+            "operands": [
+              "person",
+              "firstName"
+            ]
+          },
+          {
+            "operator": ".",
+            "operands": [
+              "person",
+              "firstName"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ORDER BY",
+        "operands": [
+          "messageCreationDate",
+          "DESC",
+          "messageId",
+          "ASC"
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "WITH",
+            "operands": [
+              "RECURSIVE",
+              "cposts",
+              "m_messageid",
+              {
+                "operator": "COALESCE",
+                "operands": [
+                  "m_content",
+                  "m_ps_imagefile",
+                  ""
+                ]
+              },
+              "m_creationdate",
+              "m_c_replyof",
+              "m_creatorid",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "m_messageid",
+                      "m_content",
+                      "m_ps_imagefile",
+                      "m_creationdate",
+                      "m_c_replyof",
+                      "m_creatorid"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "message"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "m_creatorid",
+                          ":personId"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "ORDER BY",
+                    "operands": [
+                      "m_creationdate",
+                      "DESC"
+                    ]
+                  },
+                  {
+                    "operator": "LIMIT",
+                    "operands": [
+                      "10"
+                    ]
+                  }
+                ]
+              },
+              "parent",
+              "postid",
+              "replyof",
+              "orig_postid",
+              "creator",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "UNION ALL",
+                    "operands": [
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              "m_messageid",
+                              "m_c_replyof",
+                              "m_messageid",
+                              "m_creatorid"
+                            ]
+                          },
+                          {
+                            "operator": "FROM",
+                            "operands": [
+                              "cposts"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              "m_messageid",
+                              "m_c_replyof",
+                              "orig_postid",
+                              "m_creatorid"
+                            ]
+                          },
+                          {
+                            "operator": "FROM",
+                            "operands": [
+                              "message",
+                              "parent"
+                            ]
+                          },
+                          {
+                            "operator": "WHERE",
+                            "operands": [
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  "m_messageid",
+                                  "replyof"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "p1",
+                  "m_messageid"
+                ]
+              },
+              {
+                "operator": "COALESCE",
+                "operands": [
+                  "m_ps_imagefile",
+                  "m_content",
+                  "''"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "p1",
+                  "m_creationdate"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "p2",
+                  "m_messageid"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "p2",
+                  "p_personid"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "p2",
+                  "p_firstname"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "p2",
+                  "p_lastname"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "m_messageid",
+                      "m_content",
+                      "m_ps_imagefile",
+                      "m_creationdate",
+                      "m_c_replyof"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "cposts"
+                    ]
+                  }
+                ]
+              },
+              "p1"
+            ]
+          },
+          {
+            "operator": "LEFT JOIN",
+            "operands": [
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "orig_postid",
+                      "postid",
+                      "m_messageid",
+                      "p_personid",
+                      "p_firstname",
+                      "p_lastname"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      "parent",
+                      "person"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "IS NULL",
+                        "operands": [
+                          "replyof"
+                        ]
+                      },
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "creator",
+                          "p_personid"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "p2",
+              {
+                "operator": "ON",
+                "operands": [
+                  {
+                    "operator": "=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p2",
+                          "orig_postid"
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p1",
+                          "m_messageid"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "m_creationdate",
+              "DESC",
+              {
+                "operator": ".",
+                "operands": [
+                  "p2",
+                  "m_messageid"
+                ]
+              },
+              "DESC"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "GSQL",
+    "query": [
+      {
+        "operator": "TYPEDEF",
+        "operands": [
+          {
+            "operator": "TUPLE",
+            "operands": [
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "messageId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "messageContent"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "messageCreationDate"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "originalPostId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "originalPostAuthorId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "originalPostAuthorFirstName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "originalPostAuthorLastName"
+                ]
+              },
+              "ogPostInfo"
+            ]
+          },
+          {
+            "operator": "DECLARE",
+            "operands": [
+              "HeapAccum",
+              "ogPostInfo",
+              "10",
+              "messageCreationDate",
+              "DESC",
+              "messageId",
+              "DESC",
+              {
+                "operator": "@",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "result"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "DECLARE",
+            "operands": [
+              "vPerson",
+              {
+                "operator": "{}",
+                "operands": [
+                  "personId"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ASSIGN",
+            "operands": [
+              "M",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "t"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "vPerson",
+                          "s"
+                        ]
+                      },
+                      {
+                        "operator": "EDGE",
+                        "operands": [
+                          "HAS_CREATOR"
+                        ]
+                      },
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          {
+                            "operator": "|",
+                            "operands": [
+                              "Comment",
+                              "Post"
+                            ]
+                          },
+                          "t"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "ORDER BY",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "t",
+                          "creationDate"
+                        ]
+                      },
+                      "DESC",
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "t",
+                          "id"
+                        ]
+                      },
+                      "DESC"
+                    ]
+                  },
+                  {
+                    "operator": "LIMIT",
+                    "operands": [
+                      "10"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ASSIGN",
+            "operands": [
+              "tmp",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "M",
+                          "m"
+                        ]
+                      },
+                      {
+                        "operator": "EDGE",
+                        "operands": [
+                          {
+                            "operator": "*",
+                            "operands": [
+                              "REPLY_OF"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "Post",
+                          "s"
+                        ]
+                      },
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "s"
+                        ]
+                      },
+                      {
+                        "operator": "EDGE",
+                        "operands": [
+                          "HAS_CREATOR"
+                        ]
+                      },
+                      {
+                        "operator": "VERTEX",
+                        "operands": [
+                          "Person",
+                          "p"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "PER",
+                    "operands": [
+                      "m",
+                      "s",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "ACCUM",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "STRING",
+                          "content",
+                          "''"
+                        ]
+                      },
+                      {
+                        "operator": "IF",
+                        "operands": [
+                          {
+                            "operator": "!=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "m",
+                                  "content"
+                                ]
+                              },
+                              "''"
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "content",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "m",
+                                  "content"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "=",
+                            "operands": [
+                              "content",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "imageFile"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "+=",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "result"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "ogPostInfo",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "m",
+                                  "id"
+                                ]
+                              },
+                              "content",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "m",
+                                  "creationDate"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "s",
+                                  "id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "id"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "firstName"
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  "lastName"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "PRINT",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "result"
+                    ]
+                  }
+                ]
+              },
+              "result"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

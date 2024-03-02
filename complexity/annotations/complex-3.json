@@ -1,0 +1,2987 @@
+[
+  {
+    "language": "gSQL++",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "GRAPH",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "person",
+                      "Person",
+                      {
+                        "operator": "WHERE",
+                        "operands": [
+                          {
+                            "operator": "=",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "person",
+                                  "id"
+                                ]
+                              },
+                              "$personId"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "KNOWS",
+                      "1",
+                      "2"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "otherPerson",
+                      "Person"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "HAS_CREATOR"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "m1",
+                      "Message"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "countryX",
+                      "Country"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "otherPerson"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "HAS_CREATOR"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "m2",
+                      "Message"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "countryY",
+                      "Country"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "otherPerson"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "city",
+                      "City"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "LET",
+            "operands": [
+              "endDate",
+              {
+                "operator": "+",
+                "operands": [
+                  "$startDate",
+                  {
+                    "operator": "DURATION",
+                    "operands": [
+                      {
+                        "operator": "CONCAT",
+                        "operands": [
+                          "P",
+                          {
+                            "operator": "TO_STRING",
+                            "operands": [
+                              "$durationDays"
+                            ]
+                          },
+                          "D"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "BETWEEN",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "m1",
+                      "creationDate"
+                    ]
+                  },
+                  "$startDate",
+                  "$endDate"
+                ]
+              },
+              {
+                "operator": "BETWEEN",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "m2",
+                      "creationDate"
+                    ]
+                  },
+                  "$startDate",
+                  "$endDate"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "countryX",
+                      "name"
+                    ]
+                  },
+                  "$countryXName"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "countryY",
+                      "name"
+                    ]
+                  },
+                  "$countryYName"
+                ]
+              },
+              {
+                "operator": "!=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "city",
+                      "containerId"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "countryX",
+                      "id"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "!=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "city",
+                      "containerId"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "countryY",
+                      "id"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "GROUP BY",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "person",
+                  "id"
+                ]
+              },
+              "otherPerson"
+            ]
+          },
+          {
+            "operator": "GROUP AS",
+            "operands": [
+              "g"
+            ]
+          },
+          {
+            "operator": "LET",
+            "operands": [
+              "xCount",
+              {
+                "operator": "ARRAY_COUNT",
+                "operands": [
+                  {
+                    "operator": "QUERY",
+                    "operands": [
+                      {
+                        "operator": "FROM",
+                        "operands": [
+                          "g"
+                        ]
+                      },
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          "DISTINCT",
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "g",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "m1",
+                                  "id"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "yCount",
+              {
+                "operator": "ARRAY_COUNT",
+                "operands": [
+                  {
+                    "operator": "QUERY",
+                    "operands": [
+                      {
+                        "operator": "FROM",
+                        "operands": [
+                          "g"
+                        ]
+                      },
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          "DISTINCT",
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "g",
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "m2",
+                                  "id"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "id"
+                ]
+              },
+              "personId",
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "otherPerson",
+                  "lastName"
+                ]
+              },
+              "xCount",
+              "yCount",
+              {
+                "operator": "+",
+                "operands": [
+                  "xCount",
+                  "yCount"
+                ]
+              },
+              "`count`"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "`count`",
+              "DESC",
+              "personId",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "$limit"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SPARQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "sn",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/data/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "snvoc",
+              "<http://www.ldbc.eu/ldbc_socialnet/1.0/vocabulary/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "dbpedia",
+              "<http://dbpedia.org/resource/>"
+            ]
+          },
+          {
+            "operator": "PREFIX",
+            "operands": [
+              "xsd",
+              "<http://www.w3.org/2001/XMLSchema#>"
+            ]
+          },
+          {
+            "operator": "SELECT",
+            "operands": [
+              {
+                "operator": "?",
+                "operands": [
+                  "fr"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "fname"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "lname"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "cntXCount"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "cntYCount"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "totalCount"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      {
+                        "operator": "SELECT",
+                        "operands": [
+                          "DISTINCT",
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "fr"
+                            ]
+                          },
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "city"
+                            ]
+                          },
+                          {
+                            "operator": "{}",
+                            "operands": [
+                              {
+                                "operator": "UNION",
+                                "operands": [
+                                  {
+                                    "operator": "{}",
+                                    "operands": [
+                                      {
+                                        "operator": "TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "sn",
+                                              "pers%personId%"
+                                            ]
+                                          },
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "snvoc",
+                                              "directKnows"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "fr"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "operator": "{}",
+                                    "operands": [
+                                      {
+                                        "operator": "TRIPLE",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "sn",
+                                              "pers%personId%"
+                                            ]
+                                          },
+                                          {
+                                            "operator": "/",
+                                            "operands": [
+                                              {
+                                                "operator": ":",
+                                                "operands": [
+                                                  "snvoc",
+                                                  "directKnows"
+                                                ]
+                                              },
+                                              {
+                                                "operator": ":",
+                                                "operands": [
+                                                  "snvoc",
+                                                  "directKnows"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "operator": "?",
+                                            "operands": [
+                                              "fr"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "operator": "FILTER",
+                                        "operands": [
+                                          {
+                                            "operator": "!=",
+                                            "operands": [
+                                              {
+                                                "operator": "?",
+                                                "operands": [
+                                                  "fr"
+                                                ]
+                                              },
+                                              {
+                                                "operator": "?",
+                                                "operands": [
+                                                  "sn",
+                                                  "pers%personId%"
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "TRIPLE",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "fr"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "snvoc",
+                                      "isLocatedIn"
+                                    ]
+                                  },
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "city"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "TRIPLE",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "city"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "snvoc",
+                                      "isPartOf"
+                                    ]
+                                  },
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "cnt"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "FILTER",
+                                "operands": [
+                                  {
+                                    "operator": "!=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "cnt"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "dbpedia",
+                                          "%countryXName%"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "operator": "!=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "cnt"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "dbpedia",
+                                          "%countryYName%"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "{}",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "fr"
+                        ]
+                      },
+                      {
+                        "operator": "SUM",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "msgXCount"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cntXCount"
+                        ]
+                      },
+                      {
+                        "operator": "SUM",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "msgYCount"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cntYCount"
+                        ]
+                      },
+                      {
+                        "operator": "+",
+                        "operands": [
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "cntXCount"
+                            ]
+                          },
+                          {
+                            "operator": "?",
+                            "operands": [
+                              "cntYCount"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "totalCount"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "{}",
+                        "operands": [
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "message"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "hasCreator"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "fr"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "message"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "isLocatedIn"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "cnt"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "TRIPLE",
+                            "operands": [
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "message"
+                                ]
+                              },
+                              {
+                                "operator": ":",
+                                "operands": [
+                                  "snvoc",
+                                  "creationDate"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "date"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "FILTER",
+                            "operands": [
+                              {
+                                "operator": "||",
+                                "operands": [
+                                  {
+                                    "operator": "=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "cnt"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "dbpedia",
+                                          "%countryXName"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "operator": "=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "cnt"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "dbpedia",
+                                          "%countryYName"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "BIND",
+                            "operands": [
+                              {
+                                "operator": "+",
+                                "operands": [
+                                  {
+                                    "operator": "^^",
+                                    "operands": [
+                                      "%startDate%",
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "xsd",
+                                          "dateTime"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "^^",
+                                "operands": [
+                                  "P%durationDays%D",
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "xsd",
+                                      "duration"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "endDate"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "FILTER",
+                            "operands": [
+                              {
+                                "operator": ">=",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "date"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ":",
+                                    "operands": [
+                                      "%startDate",
+                                      {
+                                        "operator": "^^",
+                                        "operands": [
+                                          {
+                                            "operator": ":",
+                                            "operands": [
+                                              "xsd",
+                                              "dateTime"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "<",
+                                "operands": [
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "date"
+                                    ]
+                                  },
+                                  {
+                                    "operator": "?",
+                                    "operands": [
+                                      "endDate"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "BIND",
+                            "operands": [
+                              {
+                                "operator": "IF",
+                                "operands": [
+                                  {
+                                    "operator": "=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "cnt"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "dbpedia",
+                                          "%countryXName"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  "1",
+                                  "0"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "msgXCount"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "BIND",
+                            "operands": [
+                              {
+                                "operator": "IF",
+                                "operands": [
+                                  {
+                                    "operator": "=",
+                                    "operands": [
+                                      {
+                                        "operator": "?",
+                                        "operands": [
+                                          "cnt"
+                                        ]
+                                      },
+                                      {
+                                        "operator": ":",
+                                        "operands": [
+                                          "dbpedia",
+                                          "%countryYName"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  "1",
+                                  "0"
+                                ]
+                              },
+                              {
+                                "operator": "?",
+                                "operands": [
+                                  "msgYCount"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "GROUP BY",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "fr"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "FILTER",
+                "operands": [
+                  {
+                    "operator": "!=",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cntXCount"
+                        ]
+                      },
+                      "0"
+                    ]
+                  },
+                  {
+                    "operator": "!=",
+                    "operands": [
+                      {
+                        "operator": "?",
+                        "operands": [
+                          "cntYCount"
+                        ]
+                      },
+                      "0"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "TRIPLE",
+                "operands": [
+                  {
+                    "operator": "?",
+                    "operands": [
+                      "fr"
+                    ]
+                  },
+                  {
+                    "operator": ":",
+                    "operands": [
+                      "snvoc",
+                      "firstName"
+                    ]
+                  },
+                  {
+                    "operator": "?",
+                    "operands": [
+                      "fname"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "TRIPLE",
+                "operands": [
+                  {
+                    "operator": "?",
+                    "operands": [
+                      "fr"
+                    ]
+                  },
+                  {
+                    "operator": ":",
+                    "operands": [
+                      "snvoc",
+                      "lastName"
+                    ]
+                  },
+                  {
+                    "operator": "?",
+                    "operands": [
+                      "lname"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "DESC",
+              {
+                "operator": "?",
+                "operands": [
+                  "totalCount"
+                ]
+              },
+              {
+                "operator": "?",
+                "operands": [
+                  "fr"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "Cypher",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "countryX",
+                  "Country",
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      "name",
+                      "$countryXName"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "countryY",
+                  "Country",
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      "name",
+                      "$countryYName"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "person",
+                  "Person",
+                  {
+                    "operator": "{}",
+                    "operands": [
+                      "id",
+                      "$personId"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "person",
+              "countryX",
+              "countryY"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "1"
+            ]
+          },
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "city",
+                  "City"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_PART_OF"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "country",
+                  "Country"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "IN",
+                "operands": [
+                  "country",
+                  {
+                    "operator": "[]",
+                    "operands": [
+                      "countryX",
+                      "countryY"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "person",
+              "countryX",
+              "countryY",
+              {
+                "operator": "COLLECT",
+                "operands": [
+                  "city"
+                ]
+              },
+              "cities"
+            ]
+          },
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "person"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "KNOWS",
+                  "1",
+                  "2"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_LOCATED_IN"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "city"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "NOT",
+                "operands": [
+                  {
+                    "operator": "=",
+                    "operands": [
+                      "person",
+                      "friend"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "NOT",
+                "operands": [
+                  {
+                    "operator": "IN",
+                    "operands": [
+                      "city",
+                      "cities"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "DISTINCT",
+              "friend",
+              "countryX",
+              "countryY"
+            ]
+          },
+          {
+            "operator": "MATCH",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "friend"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "HAS_CREATOR"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "message"
+                ]
+              },
+              {
+                "operator": "EDGE",
+                "operands": [
+                  "IS_LOCATED_IN"
+                ]
+              },
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "country"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": ">",
+                "operands": [
+                  "$endDate",
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "message",
+                      "creationDate"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "IN",
+                "operands": [
+                  {
+                    "operator": "[]",
+                    "operands": [
+                      "countryX",
+                      "countryY"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "friend",
+              {
+                "operator": "CASE",
+                "operands": [
+                  {
+                    "operator": "WHEN",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "country",
+                          "countryX"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "THEN",
+                    "operands": [
+                      "1"
+                    ]
+                  },
+                  {
+                    "operator": "ELSE",
+                    "operands": [
+                      "0"
+                    ]
+                  }
+                ]
+              },
+              "messageX",
+              {
+                "operator": "CASE",
+                "operands": [
+                  {
+                    "operator": "WHEN",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          "country",
+                          "countryY"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "THEN",
+                    "operands": [
+                      "1"
+                    ]
+                  },
+                  {
+                    "operator": "ELSE",
+                    "operands": [
+                      "0"
+                    ]
+                  }
+                ]
+              },
+              "messageY"
+            ]
+          },
+          {
+            "operator": "WITH",
+            "operands": [
+              "friend",
+              {
+                "operator": "SUM",
+                "operands": [
+                  "messageX"
+                ]
+              },
+              "xCount",
+              {
+                "operator": "SUM",
+                "operands": [
+                  "messageY"
+                ]
+              },
+              "yCount"
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": ">",
+                "operands": [
+                  "xCount",
+                  "0"
+                ]
+              },
+              {
+                "operator": ">",
+                "operands": [
+                  "yCount",
+                  "0"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "RETURN",
+            "operands": [
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "id"
+                ]
+              },
+              "friendId",
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "firstName"
+                ]
+              },
+              {
+                "operator": ".",
+                "operands": [
+                  "friend",
+                  "lastName"
+                ]
+              },
+              "xCount",
+              "yCount",
+              {
+                "operator": "+",
+                "operands": [
+                  "xCount",
+                  "yCount"
+                ]
+              },
+              "xyCount"
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "xyCount",
+              "DESC",
+              "friendId",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "SQL",
+    "query": [
+      {
+        "operator": "QUERY",
+        "operands": [
+          {
+            "operator": "SELECT",
+            "operands": [
+              "p_personid",
+              "p_firstname",
+              "p_lastname",
+              "ct1",
+              "ct2",
+              "total",
+              "totalcount"
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "UNION",
+                    "operands": [
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              "k_person2id"
+                            ]
+                          },
+                          {
+                            "operator": "FROM",
+                            "operands": [
+                              "knows"
+                            ]
+                          },
+                          {
+                            "operator": "WHERE",
+                            "operands": [
+                              "k_person1id",
+                              ":personId"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "k2",
+                                  "k_person2id"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "FROM",
+                            "operands": [
+                              "knows",
+                              "k1",
+                              "knows",
+                              "k2"
+                            ]
+                          },
+                          {
+                            "operator": "WHERE",
+                            "operands": [
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  {
+                                    "operator": ".",
+                                    "operands": [
+                                      "k1",
+                                      "k_person1id"
+                                    ]
+                                  },
+                                  ":personId"
+                                ]
+                              },
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  {
+                                    "operator": ".",
+                                    "operands": [
+                                      "k1",
+                                      "k_person2id"
+                                    ]
+                                  },
+                                  {
+                                    "operator": ".",
+                                    "operands": [
+                                      "k2",
+                                      "k_person1id"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": "<>",
+                                "operands": [
+                                  {
+                                    "operator": ".",
+                                    "operands": [
+                                      "k2",
+                                      "k_person2id"
+                                    ]
+                                  },
+                                  ":personId"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "f",
+              "person",
+              "place",
+              "p1",
+              "place",
+              "p2",
+              {
+                "operator": "QUERY",
+                "operands": [
+                  {
+                    "operator": "SELECT",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "chn",
+                          "m_c_creatorid"
+                        ]
+                      },
+                      "ct1",
+                      "ct2",
+                      {
+                        "operator": "+",
+                        "operands": [
+                          "ct1",
+                          "ct2"
+                        ]
+                      },
+                      "total"
+                    ]
+                  },
+                  {
+                    "operator": "FROM",
+                    "operands": [
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              "m_creatorid",
+                              "m_c_creatorid",
+                              {
+                                "operator": "COUNT",
+                                "operands": [
+                                  "*"
+                                ]
+                              },
+                              "ct1"
+                            ]
+                          },
+                          {
+                            "operator": "FROM",
+                            "operands": [
+                              "message",
+                              "place"
+                            ]
+                          },
+                          {
+                            "operator": "WHERE",
+                            "operands": [
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  "m_locationid",
+                                  "pl_placeid"
+                                ]
+                              },
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  "pl_name",
+                                  ":countryXName"
+                                ]
+                              },
+                              {
+                                "operator": ">=",
+                                "operands": [
+                                  "m_creationdate",
+                                  ":startDate"
+                                ]
+                              },
+                              {
+                                "operator": "<",
+                                "operands": [
+                                  {
+                                    "operator": "*",
+                                    "operands": [
+                                      {
+                                        "operator": "+",
+                                        "operands": [
+                                          ":startDate",
+                                          {
+                                            "operator": "INTERVAL",
+                                            "operands": [
+                                              "1 days"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      ":durationDays"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "GROUP BY",
+                            "operands": [
+                              "m_c_creatorid"
+                            ]
+                          }
+                        ]
+                      },
+                      "CHN",
+                      {
+                        "operator": "QUERY",
+                        "operands": [
+                          {
+                            "operator": "SELECT",
+                            "operands": [
+                              "m_creatorid",
+                              "m_c_creatorid",
+                              {
+                                "operator": "COUNT",
+                                "operands": [
+                                  "*"
+                                ]
+                              },
+                              "ct2"
+                            ]
+                          },
+                          {
+                            "operator": "FROM",
+                            "operands": [
+                              "message",
+                              "place"
+                            ]
+                          },
+                          {
+                            "operator": "WHERE",
+                            "operands": [
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  "m_locationid",
+                                  "pl_placeid"
+                                ]
+                              },
+                              {
+                                "operator": "=",
+                                "operands": [
+                                  "pl_name",
+                                  ":countryYName"
+                                ]
+                              },
+                              {
+                                "operator": ">=",
+                                "operands": [
+                                  "m_creationdate",
+                                  ":startDate"
+                                ]
+                              },
+                              {
+                                "operator": "<",
+                                "operands": [
+                                  {
+                                    "operator": "*",
+                                    "operands": [
+                                      {
+                                        "operator": "+",
+                                        "operands": [
+                                          ":startDate",
+                                          {
+                                            "operator": "INTERVAL",
+                                            "operands": [
+                                              "1 days"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      ":durationDays"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "operator": "GROUP BY",
+                            "operands": [
+                              "m_c_creatorid"
+                            ]
+                          }
+                        ]
+                      },
+                      "IND"
+                    ]
+                  },
+                  {
+                    "operator": "WHERE",
+                    "operands": [
+                      {
+                        "operator": "=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "CHN",
+                              "m_c_creatorid"
+                            ]
+                          },
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "IND",
+                              "m_c_creatorid"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "cpc"
+            ]
+          },
+          {
+            "operator": "WHERE",
+            "operands": [
+              {
+                "operator": "=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "f",
+                      "k_person2id"
+                    ]
+                  },
+                  "p_personid"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  "p_placeid",
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p1",
+                      "pl_placeid"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p1",
+                      "pl_containerplaceid"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p2",
+                      "pl_placeid"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "<>",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p2",
+                      "pl_name"
+                    ]
+                  },
+                  ":countryXName"
+                ]
+              },
+              {
+                "operator": "<>",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "p2",
+                      "pl_name"
+                    ]
+                  },
+                  ":countryYName"
+                ]
+              },
+              {
+                "operator": "=",
+                "operands": [
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "f",
+                      "k_person2id"
+                    ]
+                  },
+                  {
+                    "operator": ".",
+                    "operands": [
+                      "cpc",
+                      "m_c_creatorid"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ORDER BY",
+            "operands": [
+              "totalcount",
+              "DESC",
+              "p_personid",
+              "ASC"
+            ]
+          },
+          {
+            "operator": "LIMIT",
+            "operands": [
+              "20"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "language": "GSQL",
+    "query": [
+      {
+        "operator": "TYPEDEF",
+        "operands": [
+          {
+            "operator": "TUPLE",
+            "operands": [
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "personId"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "personFirstName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "STRING",
+                  "personLastName"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "xCount"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "yCount"
+                ]
+              },
+              {
+                "operator": "TUPLEARG",
+                "operands": [
+                  "INT",
+                  "xyCount"
+                ]
+              },
+              "msgStats"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "HeapAccum",
+          "msgStats",
+          "20",
+          "xCount",
+          "DESC",
+          "personId",
+          "ASC",
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "result"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "SumAccum",
+          "UINT",
+          {
+            "operator": "@",
+            "operands": [
+              "xCount"
+            ]
+          },
+          {
+            "operator": "@",
+            "operands": [
+              "yCount"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "maxAccum",
+          "UNIT",
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "countryId1"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "@",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  "countryId2"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "OrAccum",
+          "BOOL",
+          {
+            "operator": "@",
+            "operands": [
+              "selected"
+            ]
+          },
+          {
+            "operator": "@",
+            "operands": [
+              "selected2"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "DECLARE",
+        "operands": [
+          "INT",
+          "endDate"
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "endDate",
+          {
+            "operator": "+",
+            "operands": [
+              "startDate",
+              {
+                "operator": "*",
+                "operands": [
+                  "durationDays",
+                  {
+                    "operator": "*",
+                    "operands": [
+                      "24",
+                      "60",
+                      "60",
+                      "1000"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          {
+            "operator": "{}",
+            "operands": [
+              "personId"
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "p"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "S",
+                      "s"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "KNOWS",
+                      "1",
+                      "2"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Person",
+                      "p"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "WHERE",
+                "operands": [
+                  {
+                    "operator": "!=",
+                    "operands": [
+                      "p",
+                      "personId"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "country1",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "cn"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Country",
+                      "cn"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_PART_OF"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "City",
+                      "c"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "WHERE",
+                "operands": [
+                  {
+                    "operator": "==",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "cn",
+                          "name"
+                        ]
+                      },
+                      "countryXName"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "c",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "selected"
+                            ]
+                          }
+                        ]
+                      },
+                      "true"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "POST-ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": "@",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "countryId1"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "cn",
+                          "id"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "country2",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "cn"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "Country",
+                      "cn"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_PART_OF"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "City",
+                      "c"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "WHERE",
+                "operands": [
+                  {
+                    "operator": "==",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "cn",
+                          "name"
+                        ]
+                      },
+                      "countryYName"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "c",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "selected"
+                            ]
+                          }
+                        ]
+                      },
+                      "true"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "POST-ACCUM",
+                "operands": [
+                  {
+                    "operator": "+=",
+                    "operands": [
+                      {
+                        "operator": "@",
+                        "operands": [
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "countryId2"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "cn",
+                          "id"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "P",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "p"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "IS_LOCATED_IN"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "City",
+                      "city"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "WHERE",
+                "operands": [
+                  {
+                    "operator": "NOT",
+                    "operands": [
+                      "c",
+                      {
+                        "operator": "@",
+                        "operands": [
+                          "selected"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "P",
+          {
+            "operator": "QUERY",
+            "operands": [
+              {
+                "operator": "SELECT",
+                "operands": [
+                  "p"
+                ]
+              },
+              {
+                "operator": "FROM",
+                "operands": [
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      "P",
+                      "p"
+                    ]
+                  },
+                  {
+                    "operator": "EDGE",
+                    "operands": [
+                      "HAS_CREATOR"
+                    ]
+                  },
+                  {
+                    "operator": "VERTEX",
+                    "operands": [
+                      {
+                        "operator": "|",
+                        "operands": [
+                          "Post",
+                          "Comment"
+                        ]
+                      },
+                      "m"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "WHERE",
+                "operands": [
+                  {
+                    "operator": "BETWEEN",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "m",
+                          "creationDate"
+                        ]
+                      },
+                      "startDate",
+                      "endDate"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "ACCUM",
+                "operands": [
+                  {
+                    "operator": "IF",
+                    "operands": [
+                      {
+                        "operator": "==",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "m",
+                              "countryId"
+                            ]
+                          },
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "countryId1"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "THEN",
+                    "operands": [
+                      {
+                        "operator": "+=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "p",
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "xCount"
+                                ]
+                              }
+                            ]
+                          },
+                          "1"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "IF",
+                    "operands": [
+                      {
+                        "operator": "==",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "m",
+                              "countryId"
+                            ]
+                          },
+                          {
+                            "operator": "@",
+                            "operands": [
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "countryId2"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "operator": "THEN",
+                    "operands": [
+                      {
+                        "operator": "+=",
+                        "operands": [
+                          {
+                            "operator": ".",
+                            "operands": [
+                              "p",
+                              {
+                                "operator": "@",
+                                "operands": [
+                                  "yCount"
+                                ]
+                              }
+                            ]
+                          },
+                          "1"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "HAVING",
+                "operands": [
+                  {
+                    "operator": ">",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "xCount"
+                            ]
+                          }
+                        ]
+                      },
+                      "0"
+                    ]
+                  },
+                  {
+                    "operator": ">",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "yCount"
+                            ]
+                          }
+                        ]
+                      },
+                      "0"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "ASSIGN",
+        "operands": [
+          "P",
+          {
+            "operator": "SELECT",
+            "operands": [
+              "p"
+            ]
+          },
+          {
+            "operator": "FROM",
+            "operands": [
+              {
+                "operator": "VERTEX",
+                "operands": [
+                  "P",
+                  "p"
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "ACCUM",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "result"
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "+=",
+                "operands": [
+                  {
+                    "operator": "msgStats",
+                    "operands": [
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          "id"
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          "firstName"
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          "lastName"
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "xCount"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          "p",
+                          {
+                            "operator": "@",
+                            "operands": [
+                              "yCount"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "operator": ".",
+                        "operands": [
+                          {
+                            "operator": "+",
+                            "operands": [
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  {
+                                    "operator": "@",
+                                    "operands": [
+                                      "xCount"
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "operator": ".",
+                                "operands": [
+                                  "p",
+                                  {
+                                    "operator": "@",
+                                    "operands": [
+                                      "yCount"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "operator": "PRINT",
+            "operands": [
+              {
+                "operator": "@",
+                "operands": [
+                  {
+                    "operator": "@",
+                    "operands": [
+                      "result"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
