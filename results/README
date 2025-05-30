@@ -1,0 +1,10 @@
+# Notes for Cleaning Results (after pull-results.sh is run)
+
+1. Run `for i in 1 2 4 8 16 32; do cd n=$i; python _to_json.py logs/cc.*log; cd ..; done'
+2. Rename all the `graphix_*.json` files to just `graphix.json`.
+3. Run `for j in 1 2 4 8 16 32; do for (( i=1; i<=$j; i++ )); do sed -i '.bak' 's/^{/{ "pid": '$i', /' n=$j/logs/markerCount.$i.log ; done; done`
+   (This command is to add the PID to each log for marker-count -- be careful about doing this more than once!).
+4. For all coordinator.1.log files, we need to fix the JSON (bad event strings):
+    `find . -type f -name 'coordinator.1.log' -exec sed -i '.bak' -E 's/"event":([a-zA-Z0-9_]+)/"event":"\1"/g' {} +`
+5. Run `for j in 1 2 4 8 16 32; do for (( i=1; i<=$j; i++ )); do sed -i '.bak' 's/^{/{ "pid": '$i', /' n=$j/logs/pathLength.$i.log ; done; done`
+   (This command is to add the PID to each log for path-lengths! -- be careful about doing this more than once!).

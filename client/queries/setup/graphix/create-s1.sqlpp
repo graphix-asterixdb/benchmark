@@ -35,7 +35,7 @@ CREATE TYPE CommentType AS {
 };
 CREATE EXTERNAL DATASET Comment (CommentType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Comment"),
+    ("path"="$DATA_PATH/dynamic/Comment"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -50,7 +50,7 @@ CREATE TYPE CommentHasCreatorPersonType AS {
 };
 CREATE EXTERNAL DATASET CommentHasCreatorPerson (CommentHasCreatorPersonType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Comment_hasCreator_Person"),
+    ("path"="$DATA_PATH/dynamic/Comment_hasCreator_Person"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -65,7 +65,7 @@ CREATE TYPE CommentHasTagTagType AS {
 };
 CREATE EXTERNAL DATASET CommentHasTagTag (CommentHasTagTagType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Comment_hasTag_Tag"),
+    ("path"="$DATA_PATH/dynamic/Comment_hasTag_Tag"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -80,7 +80,7 @@ CREATE TYPE CommentIsLocatedInCountryType AS {
 };
 CREATE EXTERNAL DATASET CommentIsLocatedInCountry (CommentIsLocatedInCountryType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Comment_isLocatedIn_Country"),
+    ("path"="$DATA_PATH/dynamic/Comment_isLocatedIn_Country"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -95,7 +95,7 @@ CREATE TYPE CommentReplyOfCommentType AS {
 };
 CREATE EXTERNAL DATASET CommentReplyOfComment (CommentReplyOfCommentType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Comment_replyOf_Comment"),
+    ("path"="$DATA_PATH/dynamic/Comment_replyOf_Comment"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -110,7 +110,7 @@ CREATE TYPE CommentReplyOfPostType AS {
 };
 CREATE EXTERNAL DATASET CommentReplyOfPost (CommentReplyOfPostType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Comment_replyOf_Post"),
+    ("path"="$DATA_PATH/dynamic/Comment_replyOf_Post"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -125,7 +125,7 @@ CREATE TYPE ForumType AS {
 };
 CREATE EXTERNAL DATASET Forum (ForumType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Forum"),
+    ("path"="$DATA_PATH/dynamic/Forum"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -140,7 +140,7 @@ CREATE TYPE ForumContainerOfPostType AS {
 };
 CREATE EXTERNAL DATASET ForumContainerOfPost (ForumContainerOfPostType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Forum_containerOf_Post"),
+    ("path"="$DATA_PATH/dynamic/Forum_containerOf_Post"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -155,7 +155,7 @@ CREATE TYPE ForumHasMemberPersonType AS {
 };
 CREATE EXTERNAL DATASET ForumHasMemberPerson (ForumHasMemberPersonType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Forum_hasMember_Person"),
+    ("path"="$DATA_PATH/dynamic/Forum_hasMember_Person"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -164,7 +164,7 @@ USING  localfs (
 );
 CREATE EXTERNAL DATASET ForumHasModeratorPerson (ForumHasMemberPersonType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Forum_hasModerator_Person"),
+    ("path"="$DATA_PATH/dynamic/Forum_hasModerator_Person"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -179,7 +179,7 @@ CREATE TYPE ForumHasTagTagType AS {
 };
 CREATE EXTERNAL DATASET ForumHasTagTag (ForumHasTagTagType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Forum_hasTag_Tag"),
+    ("path"="$DATA_PATH/dynamic/Forum_hasTag_Tag"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -201,7 +201,7 @@ CREATE TYPE PersonType AS {
 };
 CREATE EXTERNAL DATASET Person (PersonType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person"),
+    ("path"="$DATA_PATH/dynamic/Person"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -216,7 +216,7 @@ CREATE TYPE PersonHasInterestTagType AS {
 };
 CREATE EXTERNAL DATASET PersonHasInterestTag (PersonHasInterestTagType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_hasInterest_Tag"),
+    ("path"="$DATA_PATH/dynamic/Person_hasInterest_Tag"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -231,7 +231,7 @@ CREATE TYPE PersonIsLocatedInCityType AS {
 };
 CREATE EXTERNAL DATASET PersonIsLocatedInCity (PersonIsLocatedInCityType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_isLocatedIn_City"),
+    ("path"="$DATA_PATH/dynamic/Person_isLocatedIn_City"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -246,7 +246,7 @@ CREATE TYPE PersonKnowsPersonType AS {
 };
 CREATE EXTERNAL DATASET PersonKnowsPerson (PersonKnowsPersonType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_knows_Person"),
+    ("path"="$DATA_PATH/dynamic/Person_knows_Person"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -261,7 +261,7 @@ CREATE TYPE PersonLikesCommentType AS {
 };
 CREATE EXTERNAL DATASET PersonLikesComment (PersonLikesCommentType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_likes_Comment"),
+    ("path"="$DATA_PATH/dynamic/Person_likes_Comment"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -276,7 +276,7 @@ CREATE TYPE PersonLikesPostType AS {
 };
 CREATE EXTERNAL DATASET PersonLikesPost (PersonLikesPostType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_likes_Post"),
+    ("path"="$DATA_PATH/dynamic/Person_likes_Post"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -292,7 +292,7 @@ CREATE TYPE PersonStudyAtUniversityType AS {
 };
 CREATE EXTERNAL DATASET PersonStudyAtUniversity (PersonStudyAtUniversityType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_studyAt_University"),
+    ("path"="$DATA_PATH/dynamic/Person_studyAt_University"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -308,7 +308,7 @@ CREATE TYPE PersonWorkAtCompanyType AS {
 };
 CREATE EXTERNAL DATASET PersonWorkAtCompany (PersonWorkAtCompanyType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Person_workAt_Company"),
+    ("path"="$DATA_PATH/dynamic/Person_workAt_Company"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -328,7 +328,7 @@ CREATE TYPE PostType AS {
 };
 CREATE EXTERNAL DATASET Post (PostType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Post"),
+    ("path"="$DATA_PATH/dynamic/Post"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -343,7 +343,7 @@ CREATE TYPE PostHasCreatorPersonType AS {
 };
 CREATE EXTERNAL DATASET PostHasCreatorPerson (PostHasCreatorPersonType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Post_hasCreator_Person"),
+    ("path"="$DATA_PATH/dynamic/Post_hasCreator_Person"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -358,7 +358,7 @@ CREATE TYPE PostHasTagTagType AS {
 };
 CREATE EXTERNAL DATASET PostHasTagTag (PostHasTagTagType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Post_hasTag_Tag"),
+    ("path"="$DATA_PATH/dynamic/Post_hasTag_Tag"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -373,7 +373,7 @@ CREATE TYPE PostIsLocatedInCountryType AS {
 };
 CREATE EXTERNAL DATASET PostIsLocatedInCountry (PostIsLocatedInCountryType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/dynamic/Post_isLocatedIn_Country"),
+    ("path"="$DATA_PATH/dynamic/Post_isLocatedIn_Country"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -389,7 +389,7 @@ CREATE TYPE OrganisationType AS {
 };
 CREATE EXTERNAL DATASET Organisation (OrganisationType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/Organisation"),
+    ("path"="$DATA_PATH/static/Organisation"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -403,7 +403,7 @@ CREATE TYPE OrganisationIsLocatedInPlaceType AS {
 };
 CREATE EXTERNAL DATASET OrganisationIsLocatedInPlace (OrganisationIsLocatedInPlaceType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/Organisation_isLocatedIn_Place"),
+    ("path"="$DATA_PATH/static/Organisation_isLocatedIn_Place"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -419,7 +419,7 @@ CREATE TYPE PlaceType AS {
 };
 CREATE EXTERNAL DATASET Place (PlaceType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/Place"),
+    ("path"="$DATA_PATH/static/Place"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -433,7 +433,7 @@ CREATE TYPE PlaceIsPartOfPlaceType AS {
 };
 CREATE EXTERNAL DATASET PlaceIsPartOfPlace (PlaceIsPartOfPlaceType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/Place_isPartOf_Place"),
+    ("path"="$DATA_PATH/static/Place_isPartOf_Place"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -448,7 +448,7 @@ CREATE TYPE TagType AS {
 };
 CREATE EXTERNAL DATASET Tag (TagType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/Tag"),
+    ("path"="$DATA_PATH/static/Tag"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -462,7 +462,7 @@ CREATE TYPE TagHasTypeTagClassType AS {
 };
 CREATE EXTERNAL DATASET TagHasTypeTagClass (TagHasTypeTagClassType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/Tag_hasType_TagClass"),
+    ("path"="$DATA_PATH/static/Tag_hasType_TagClass"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -477,7 +477,7 @@ CREATE TYPE TagClassType AS {
 };
 CREATE EXTERNAL DATASET TagClass (TagClassType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/TagClass"),
+    ("path"="$DATA_PATH/static/TagClass"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),
@@ -491,7 +491,7 @@ CREATE TYPE TagClassIsSubclassOfTagClassType AS {
 };
 CREATE EXTERNAL DATASET TagClassIsSubclassOfTagClass (TagClassIsSubclassOfTagClassType)
 USING  localfs (
-    ("path"="localhost:///home/ec2-user/data0/static/TagClass_isSubclassOf_TagClass"),
+    ("path"="$DATA_PATH/static/TagClass_isSubclassOf_TagClass"),
     ("expression"="(.)*part(.)*.csv$"),
     ("format"="delimited-text"),
     ("delimiter"="|"),

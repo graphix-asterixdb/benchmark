@@ -13,7 +13,7 @@ This instance was generated using the following commands:
 08. sudo mount -a  
 09. sudo rm -f /etc/yum.repos.d/bintray-rpm.repo
 10. curl -L https://www.scala-sbt.org/sbt-rpm.repo > sbt-rpm.repo
-11. sudo mv sbt-rpm.repo /etc/yum.repos.d/
+11. sudo mv sbt-rpm.repo /etc/yum.repos.d/ ; sudo yum install sbt
 12. sudo yum install java-11-amazon-corretto-headless
 13. cd ldbc_snb_datagen_spark
 14. sbt assembly
@@ -45,31 +45,32 @@ This instance was generated using the following commands:
 30. ./tools/run.py --parallelism 32 --memory 100G -- --format csv --scale-factor 300 --explode-edges --mode bi --format-options header=false,quoteAll=true --output-dir /home/ec2-user/ldbc_snb_efs/sf-300 --generate-factors
 
 #   Restart here (just to be safe)
-31. git clone https://github.com/ldbc/ldbc_snb_interactive_driver.git
+31. git clone https://github.com/ldbc/ldbc_snb_interactive_v2_driver.git
 32. git clone https://github.com/ldbc/ldbc_snb_bi.git
-33. cd ldbc_snb_interactive_driver
-34. sudo amazon-linux-extras enable python3.8 ; sudo yum install python3.8
-35. python3.8 -m venv venv
-36. vi ~/ldbc_snb_interactive_driver/activate-env.sh  # Add the following lines:
+#   Update: Needed to install 3.11 from source...
+# 34. sudo amazon-linux-extras enable python3.11 ; sudo yum install python3.11
+33. cd ldbc_snb_interactive_v2_driver
+35. python3.11 -m venv venv
+36. vi ~/ldbc_snb_interactive_v2_driver/activate-env.sh  # Add the following lines:
     #!/bin/bash
-    source /home/ec2-user/ldbc_snb_interactive_driver/venv/bin/activate
+    source /home/ec2-user/ldbc_snb_interactive_v2_driver/venv/bin/activate
     export PLATFORM_VERSION=$(sbt -batch -error 'print platformVersion')
     export DATAGEN_VERSION=$(sbt -batch -error 'print version')
     export LDBC_SNB_DATAGEN_JAR=$(sbt -batch -error 'print assembly / assemblyOutputPath')
     export PATH=$PATH:/home/ec2-user/spark-3.2.2-bin-hadoop3.2/bin
-37. chmod +x ~/ldbc_snb_interactive_driver/activate-env.sh
-38. source ~/ldbc_snb_interactive_driver/activate-env.sh
-39. pip install duckdb==0.6.1 pytz networkit pandas 
+37. chmod +x ~/ldbc_snb_interactive_v2_driver/activate-env.sh
+38. source ~/ldbc_snb_interactive_v2_driver/activate-env.sh
+39. pip install duckdb==0.10.2 pytz networkit pandas==2.0.3 ; pip install numpy==1.26.4
 
 #   Generate both SF1 and SF300 interactive workload parameters
 40. export SF=1 ; export LDBC_SNB_DATAGEN_MAX_MEM=100G ; export LDBC_SNB_DATA_ROOT_DIRECTORY=/home/ec2-user/ldbc_snb_efs/sf-1/
 41. export LDBC_SNB_FACTOR_TABLES_DIR=${LDBC_SNB_DATA_ROOT_DIRECTORY}/factors/parquet/raw/composite-merged-fk
-42. ./paramgen/scripts/paramgen.sh
-43. mkdir ~/ldbc_snb_efs/sf-1/parameters ; mv /home/ec2-user/ldbc_snb_interactive_driver/parameters/* ~/ldbc_snb_efs/sf-1/parameters
+42. cd paramgen; ./scripts/paramgen.sh
+43. mkdir ~/ldbc_snb_efs/sf-1/parameters ; mv /home/ec2-user/ldbc_snb_interactive_v2_driver/parameters/* ~/ldbc_snb_efs/sf-1/parameters
 44. export SF=300 ; export LDBC_SNB_DATAGEN_MAX_MEM=100G ; export LDBC_SNB_DATA_ROOT_DIRECTORY=/home/ec2-user/ldbc_snb_efs/sf-300/
 45. export LDBC_SNB_FACTOR_TABLES_DIR=${LDBC_SNB_DATA_ROOT_DIRECTORY}/factors/parquet/raw/composite-merged-fk
-46. ./paramgen/scripts/paramgen.sh
-47. mkdir ~/ldbc_snb_efs/sf-300/parameters ; mv /home/ec2-user/ldbc_snb_interactive_driver/parameters/* ~/ldbc_snb_efs/sf-300/parameters
+46. cd paramgen; ./scripts/paramgen.sh
+47. mkdir ~/ldbc_snb_efs/sf-300/parameters ; mv /home/ec2-user/ldbc_snb_interactive_v2_driver/parameters/* ~/ldbc_snb_efs/sf-300/parameters
 
 #   Generate both SF1 and SF300 bi workload parameters
 48. rm -rf ~/ldbc_snb_bi/paramgen/scratch/factors/* ;  cp -r ~/ldbc_snb_efs/sf-1/factors/parquet/raw/composite-merged-fk/* ~/ldbc_snb_bi/paramgen/scratch/factors/
@@ -83,3 +84,5 @@ This instance was generated using the following commands:
 56. mv ~/ldbc_snb_bi/parameters/parameters-sf300/* ~/ldbc_snb_efs/sf-300/parameters
 
 #   ...and repeat this for all scale-factors in between (SF3, SF10, SF30, SF100)
+
+# NOTE: YOU ALSO NEED TO RUN THE SCRIPTS IN TRANSFORM USING subjects/graphix/bin/query.sh TO GET THE JSONL FILES :-)!

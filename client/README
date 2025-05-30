@@ -10,17 +10,17 @@ This instance was generated using the following commands:
 04. sudo yum install openssl-devel bzip2-devel libffi-devel
 05. sudo yum groupinstall "Development Tools"
 06. cd /usr/src ; sudo wget https://ftp.openssl.org/source/openssl-1.1.1q.tar.gz --no-check-certificate
-07. sudo tar -xzvf openssl-1.1.1q.tar.gz
-08. cd openssl-1.1.1q ; sudo ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib no-shared zlib-dynamic
-09. sudo make
-10. sudo make install
+# 07. sudo tar -xzvf openssl-1.1.1q.tar.gz
+# 08. cd openssl-1.1.1q ; sudo ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib no-shared zlib-dynamic
+# 09. sudo make
+# 10. sudo make install
 11. cd ~ ; wget https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz
 12. tar -xzf Python-3.11.1.tgz
 13. cd Python-3.11.1
 14. ./configure --enable-optimizations --with-openssl=/usr
 15. # this next command will take a while... get some coffee :-)
     sudo make altinstall
-16. cd client ; python3.11 -m venv venv
+16. cd ~/client ; python3.11 -m venv venv
 17. source ~/client/venv/bin/activate
 18. pip install -r ~/client/requirements.txt
 

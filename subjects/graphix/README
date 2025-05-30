@@ -1,5 +1,8 @@
 # LDBC SNB Graphix Node Builder
 
+# Note: make sure the permissions for your security group are correct as well!
+# They should allow NFS traffic as well 19001-19006 TCP traffic!
+
 The purpose of this instance is to generate a Graphix cluster.
 This instance was generated using the following commands:
 01. sudo yum install git tmux htop python3-pip java-11-amazon-corretto-headless
@@ -36,5 +39,4 @@ This instance was generated using the following commands:
 17. ./bin/start.sh
 
 # Setup for SF300.
-18. ./bin/copy_raw.sh 300
-19. ./bin/setup.sh
+19. ./bin/setup.sh 300
